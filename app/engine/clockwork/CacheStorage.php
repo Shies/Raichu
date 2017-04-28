@@ -34,7 +34,7 @@ class CacheStorage extends Storage
             return;
         }
 
-        if ($data = static::getMemcached($this->host, $this->port)->get('pikachu_clockwork_'.$id)) {
+        if ($data = static::getMemcached($this->host, $this->port)->get('raichu_clockwork_'.$id)) {
             return new Request(json_decode($data, true));
         }
 
@@ -43,6 +43,6 @@ class CacheStorage extends Storage
 
     public function store(Request $request)
     {
-        static::getMemcached($this->host, $this->port)->set('pikachu_clockwork_'.$request->id, @json_encode($this->applyFilter($request->toArray())), 30);
+        static::getMemcached($this->host, $this->port)->set('raichu_clockwork_'.$request->id, @json_encode($this->applyFilter($request->toArray())), 30);
     }
 }

@@ -100,4 +100,10 @@ class Dispatcher
         return $this;
     }
 
+
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
 }

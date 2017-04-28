@@ -34,10 +34,12 @@ class Request
         }
     }
 
+
     public function getUrl()
     {
         return $_SERVER['REQUEST_URI'];
     }
+
 
     public function getUrlPath()
     {
@@ -52,6 +54,7 @@ class Request
         // Remove trailing slash + enforce a slash at the start
         return ($uri = '/'.trim($uri, '/'));
     }
+
 
     public function getMethod()
     {
@@ -70,10 +73,12 @@ class Request
         return $method;
     }
 
+
     public function isAjax()
     {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     }
+
 
     // GET Parameters
     public function get($name = '', $default = '')

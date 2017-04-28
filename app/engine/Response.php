@@ -28,6 +28,7 @@ class Response
         $this->_ret[$name] = $value;
     }
 
+
     /**
      * 通过成员变量来获取响应数据
      *
@@ -40,7 +41,11 @@ class Response
     }
 
 
-
+    /**
+     * 设置HTTP响应头
+     *
+     * @param int $code 响应吗
+     */
     public function setHeader($code)
     {
         $message = self::$httpStatuses[$code];
@@ -48,6 +53,11 @@ class Response
     }
 
 
+    /**
+     * 重定向地址
+     *
+     * @param string $url 地址
+     */
     public function redirect($url)
     {
         header("Location: {$url}");
@@ -55,6 +65,13 @@ class Response
     }
 
 
+    /**
+     * 根据制定类型响应内容
+     *
+     * @param string $data     结构体
+     * @param string $type     类型
+     * @param int $json_option
+     */
     public function ajaxReturn($data, $type = 'Json', $json_option = JSON_ERROR_NONE)
     {
         switch (strtoupper($type)) {
@@ -72,6 +89,12 @@ class Response
     }
 
 
+    /**
+     * 中止计划(响应体)
+     *
+     * @param int $code
+     * @param string $message
+     */
     public function abort($code, $message = '')
     {
         $accept_code = [404, 405, 500, 502, 503, 504];

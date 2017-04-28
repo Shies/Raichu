@@ -23,6 +23,7 @@ class App extends Container
         $this->singleton("router", Router::class);
         $this->bind("dispatcher", Dispatcher::class);
         $this->bind("loader", Loader::class);
+        $this->bind("model", Model::class);
     }
 
 
@@ -68,35 +69,55 @@ class App extends Container
         }
     }
 
-    public function getRouter()
-    {
-        return $this->make("router", [$this]);
-    }
 
     public function getRequest()
     {
         return $this->make("request");
     }
 
+
     public function getResponse()
     {
         return $this->make("response");
     }
+
 
     public function getView()
     {
         return $this->make("view");
     }
 
+
+    public function getRouter()
+    {
+        return $this->make("router", [$this]);
+    }
+
+
+    public function dispatcher()
+    {
+        return $this->make("dispatcher", [$this]);
+    }
+
+
+    public function autoload($modules = null)
+    {
+        return $this->make("loader", [$modules]);
+    }
+
+
+    public static function getModel($table, $database = 'default')
+    {
+        $instance = static::getInstance();
+        return $instance->make("model", [$table, $database]);
+    }
+
+
     public static function getDB($database = 'default')
     {
         return \ORM::get_db($database);
     }
 
-    public static function getModel($table, $database = 'default')
-    {
-        return new Model($table, $database);
-    }
 
     public static function middleware($cls, $middleware, $is_static = false)
     {
@@ -106,17 +127,6 @@ class App extends Container
         } else {
             $cls::middleware($middleware);
         }
-    }
-
-    public function autoload($modules = null)
-    {
-        return $this->make("loader", [$modules]);
-    }
-
-
-    public function dispatcher()
-    {
-        return $this->make("dispatcher", [$this]);
     }
 
 }

@@ -1,17 +1,13 @@
 <?php
-/**
- * Class Container
- *
- * @package   Raichu\Foundation
- * @copyright Copyright (c) 2017, Bilibili
- */
-
 namespace bilibili\raichu\engine;
 
 /**
  * Container容器类，实现依赖注入
  * 通过容器类，使类的绑定与实例化解耦
- * @package Raichu\Foundation
+ *
+ * User: gukai@bilibili.com
+ * Date: 17/2/11
+ * Time: 下午4:57
  */
 class Container implements \ArrayAccess
 {

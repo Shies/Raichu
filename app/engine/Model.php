@@ -47,7 +47,6 @@ class Model
     public function clean()
     {
         $this->_instance = \ORM::for_table($this->_table, $this->_database);
-
         return $this;
     }
 

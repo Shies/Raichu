@@ -7,12 +7,16 @@ namespace bilibili\raichu\engine;
  * Date: 17/2/15
  * Time: 下午6:57
  */
-class Controller extends Container
+class Controller
 {
+
     protected $middleware;
+    protected $app;
+
 
     public function __construct()
     {
+        $this->app = App::getInstance();
         if ($this->middleware) {
             $middleware = $this->middleware;
             if (is_array($middleware)) {
@@ -35,21 +39,19 @@ class Controller extends Container
 
     public function getView()
     {
-        $this->singleton("view", View::class);
-        return $this->make("view");
+        return $this->app->make("view");
     }
 
 
     public function getResponse()
     {
-        $this->singleton("response", Response::class);
-        return $this->make("response");
+        return $this->app->make("response");
     }
 
 
     public function make($abstract, array $parameters = [])
     {
-        return parent::make($abstract, $parameters);
+        return $this->app->make($abstract, $parameters);
     }
 
 }

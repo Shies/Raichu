@@ -11,7 +11,7 @@ abstract class AbstractModel extends Model
 {
 
     protected $_table = 'logger';
-    protected $_database;
+    protected $_database = 'default';
 
     // 表前缀, 可统一管理
     public static $_tbprefix;

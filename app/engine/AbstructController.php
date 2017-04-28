@@ -9,14 +9,21 @@ use bilibili\raichu\engine\Controller;
  */
 abstract class AbstractController extends Controller
 {
-    // 初始化当前指针
+    /**
+     * @var AbstractController
+     * 初始化当前指针
+     */
     private static $_instance;
 
 
-
+    /**
+     * AbstractController constructor.
+     * 初始化当前指针
+     */
     public function __construct()
     {
         self::$_instance =& $this;
+        parent::__construct();
     }
 
 
@@ -30,7 +37,10 @@ abstract class AbstractController extends Controller
     }
 
 
-
+    /**
+     * @return AbstractController
+     * 获取当前指针
+     */
     public static function &getInstance()
     {
         return self::$_instance;

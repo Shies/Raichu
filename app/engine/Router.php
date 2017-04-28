@@ -45,6 +45,8 @@ class Router
      */
     protected $routeInfo = [];
 
+
+
     public function __call($method, $params)
     {
         $accept_method = array('get', 'post', 'patch', 'delete', 'put', 'options');
@@ -57,7 +59,6 @@ class Router
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->config = $this->app->config;
     }
 
 
@@ -108,7 +109,7 @@ class Router
 
     public function autoHandle($request = null)
     {
-        if (!isset($this->config['modules'])) {
+        if (!isset($this->app->config['modules'])) {
             return false;
         }
 
@@ -119,8 +120,8 @@ class Router
 
         // 判断是否启动了modules
         if (
-            isset($this->config['modules']) &&
-            !in_array($modules, $this->config['modules'])
+            isset($this->app->config['modules']) &&
+            !in_array($modules, $this->app->config['modules'])
         ) {
             return false;
         }
@@ -133,11 +134,11 @@ class Router
             $ref = new \ReflectionMethod($controller, $method);
             if ($ref->isPublic() && $ref->isStatic()) {
                 if (is_callable([new $controller, 'beforeExecuteRoute'])) {
-                    $controller::{'beforeExecuteRoute'}(null);
+                    $controller::beforeExecuteRoute(null);
                 }
                 $controller::$method($params);
                 if (is_callable([new $controller, 'afterExecuteRoute'])) {
-                    $controller::{'afterExecuteRoute'}(null);
+                    $controller::afterExecuteRoute(null);
                 }
                 goto _return;
             }
@@ -146,11 +147,11 @@ class Router
                 $ctl = new $controller();
                 if (is_callable([$ctl, $method])) {
                     if (is_callable([$ctl, 'beforeExecuteRoute'])) {
-                        $ctl->{'beforeExecuteRoute'}(null);
+                        $ctl->beforeExecuteRoute(null);
                     }
                     call_user_func_array([$ctl, $method], $params);
                     if (is_callable([$ctl, 'afterExecuteRoute'])) {
-                        $ctl->{'afterExecuteRoute'}(null);
+                        $ctl->afterExecuteRoute(null);
                     }
                     goto _return;
                 }
@@ -166,16 +167,15 @@ _return:
     public function fetchModules($slash = DIRECTORY_SEPARATOR)
     {
         $uri = $this->app->make("request")->getUrlPath();
-
-        $item = null;
         if ($slash === $uri) {
             return static::$modules;
         }
 
         $uri = explode($slash, trim($uri, $slash));
-
         reset($uri);
         $module = current($uri);
+
+        $item = null;
         if (in_array(strtoupper($module), ['V4', 'API'])) {
             next($uri);
             $item = current($uri);
@@ -211,8 +211,8 @@ _return:
     public function fetchParams()
     {
         if (
-            isset($this->config['is_enable_response']) &&
-            false !== $this->config['is_enable_response']
+            isset($this->app->config['is_enable_response']) &&
+            false !== $this->app->config['is_enable_response']
         ) {
             array_unshift(static::$params, $this->app->make("response"));
         }
