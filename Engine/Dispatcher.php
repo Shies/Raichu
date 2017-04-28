@@ -22,6 +22,10 @@ class Dispatcher
     protected $route = [];
 
 
+    /**
+     * Dispatcher constructor.
+     * @param \Raichu\Engine\App $app
+     */
     public function __construct(App $app)
     {
         $this->router = $app->getRouter();
@@ -30,6 +34,14 @@ class Dispatcher
     }
 
 
+    /**
+     * 渲染指定的模版函数
+     *
+     * @param $name
+     * @param array $data
+     * @param bool|false $display
+     * @return bool|null
+     */
     public function render($name, $data = [], $display = false)
     {
         if (defined('TPL_PATH')) {
@@ -52,12 +64,21 @@ class Dispatcher
     }
 
 
+    /**
+     * 调度器解析RouterURL
+     * @return void
+     */
     public function parseUrl()
     {
         $this->router->parseUrl();
     }
 
-
+    /**
+     * 通过调度器执行Request
+     *
+     * @param callable $request
+     * @return bool
+     */
     public function dispatch(callable $request)
     {
         $this->router->run($request);
