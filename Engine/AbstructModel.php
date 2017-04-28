@@ -9,16 +9,35 @@ use Raichu\Engine\Model;
  */
 abstract class AbstractModel extends Model
 {
-
+    /**
+     * 数据表名
+     * @var string
+     */
     protected $_table = 'logger';
+
+    /**
+     * 数据库名
+     * @var string
+     */
     protected $_database = 'default';
 
-    // 表前缀, 可统一管理
+    /**
+     * 表前缀, 可统一管理
+     * @var string
+     */
     public static $_tbprefix;
+
+    /**
+     * 数据库主键名
+     * @var string
+     */
     public static $_primary = 'id';
 
 
-
+    /**
+     * 初始化方法
+     * @return void
+     */
     public function initialize()
     {
         static::$_tbprefix = null;
@@ -26,7 +45,13 @@ abstract class AbstractModel extends Model
     }
 
 
-
+    /**
+     * 数据获取函数(返回二维数据)
+     *
+     * @param array $where
+     * @param ...$args
+     * @return mixed
+     */
     public function get(array $where, ...$args)
     {
         $model = $this->clean();
@@ -46,7 +71,12 @@ abstract class AbstractModel extends Model
     }
 
 
-
+    /**
+     * 数据插入函数(key/value)
+     *
+     * @param array $data
+     * @return mixed
+     */
     public function add(array $data)
     {
         $this->clean()->create()->set($data)->save();
@@ -54,7 +84,13 @@ abstract class AbstractModel extends Model
     }
 
 
-    
+    /**
+     * 数据查找函数(返回一维数据)
+     *
+     * @param $id
+     * @param bool|true $is_array
+     * @return bool
+     */
     public function find($id, $is_array = true)
     {
         $item = $this->clean()->where(static::$_primary, $id)->find_one();
@@ -66,7 +102,13 @@ abstract class AbstractModel extends Model
     }
 
 
-
+    /**
+     * 数据更新函数
+     *
+     * @param $id
+     * @param array $data
+     * @return int
+     */
     public function update($id, array $data)
     {
         $item = $this->find($id, false);
@@ -76,7 +118,12 @@ abstract class AbstractModel extends Model
     }
 
 
-
+    /**
+     * 数据删除函数
+     *
+     * @param $id
+     * @return int
+     */
     public function delete($id)
     {
         $item = $this->find($id, false);
@@ -98,7 +145,7 @@ abstract class AbstractModel extends Model
 
 
     /**
-     * Get table name.
+     * Get Database name.
      *
      * @return string
      */
@@ -133,8 +180,8 @@ abstract class AbstractModel extends Model
     }
 
 
-    /* *
-     * load curdbuilder set write operation
+    /**
+     * load setBuilder set write operation
      *
      * @param mixed INSERT, DELETE, UPDATE
      */

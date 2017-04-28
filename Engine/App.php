@@ -12,9 +12,16 @@ use Raichu\Middleware\Clockwork\CacheStorage;
 class App extends Container
 {
 
+    /**
+     * 初始化APP当前指针
+     * @var object
+     */
     protected static $instance;
 
-
+    /**
+     * 初始化APP构造函数
+     * App constructor.
+     */
     public function __construct()
     {
         $this->singleton("request", Request::class);
@@ -26,7 +33,10 @@ class App extends Container
         $this->bind("model", Model::class);
     }
 
-
+    /**
+     * 初始化当前APP实例
+     * @return object
+     */
     public static function getInstance()
     {
         if (null == static::$instance) {
@@ -36,7 +46,10 @@ class App extends Container
         return static::$instance;
     }
 
-
+    /**
+     * 开启ClockWork Debug模式
+     * return void
+     */
     public function openDebug()
     {
         $this->debug = true;
@@ -53,7 +66,10 @@ class App extends Container
         Monitor::getInstance()->startEvent('App Request', 'Total Time Costs.');
     }
 
-
+    /**
+     * 初始化ORM数据库实例
+     * @param array $config
+     */
     public function setDB(array $config)
     {
         foreach ($config as $name => $option) {
@@ -69,43 +85,69 @@ class App extends Container
         }
     }
 
-
+    /**
+     * 初始化请求实例
+     * @return mixed
+     */
     public function getRequest()
     {
         return $this->make("request");
     }
 
-
+    /**
+     * 初始化响应实例
+     * @return mixed
+     */
     public function getResponse()
     {
         return $this->make("response");
     }
 
-
+    /**
+     * 初始化视图实例
+     * @return mixed
+     */
     public function getView()
     {
         return $this->make("view");
     }
 
-
+    /**
+     * 初始化当前路由实例
+     * @return mixed
+     */
     public function getRouter()
     {
         return $this->make("router", [$this]);
     }
 
-
+    /**
+     * 初始化分发器实例
+     * @return mixed
+     */
     public function dispatcher()
     {
         return $this->make("dispatcher", [$this]);
     }
 
-
+    /**
+     * 初始化装载器实例
+     *
+     * @param null $modules
+     * @return mixed
+     */
     public function autoload($modules = null)
     {
         return $this->make("loader", [$modules]);
     }
 
-
+    /**
+     * 初始化ORM数据库实例
+     *
+     * @param $table
+     * @param string $database
+     * @return mixed
+     */
     public static function getModel($table, $database = 'default')
     {
         $instance = static::getInstance();
@@ -113,12 +155,25 @@ class App extends Container
     }
 
 
+    /**
+     * 初始化数据库实例
+     *
+     * @param string $database
+     * @return mixed
+     */
     public static function getDB($database = 'default')
     {
         return \ORM::get_db($database);
     }
 
 
+    /**
+     * 初始化中间件
+     *
+     * @param $cls
+     * @param $middleware
+     * @param bool|false $is_static
+     */
     public static function middleware($cls, $middleware, $is_static = false)
     {
         $cls = ucfirst($cls);

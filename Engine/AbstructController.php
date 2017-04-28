@@ -66,7 +66,12 @@ abstract class AbstractController extends Controller
     }
 
 
-
+    /**
+     * HTTP Response Code
+     *
+     * @param $code
+     * @return string
+     */
     public static function getResponseDescription($code)
     {
         $codes = array(
