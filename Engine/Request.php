@@ -1,5 +1,5 @@
 <?php
-namespace bilibili\raichu\engine;
+namespace Raichu\Engine;
 /**
  * 请求处理.
  * User: gukai@bilibili.com

@@ -1,8 +1,7 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\middleware\clockwork\Monitor;
-use Clockwork\Support\Lumen\Controller;
-use bilibili\raichu\engine\App;
+namespace Raichu\Engine;
+use Raichu\Engine\App;
+use Raichu\Middleware\Clockwork\Monitor;
 
 /**
  * 自动识别和手动配置路由.

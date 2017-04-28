@@ -3,7 +3,7 @@
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use bilibili\raichu\engine\App;
+use Raichu\Engine\App;
 
 class HelloCommand extends Command
 {

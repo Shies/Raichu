@@ -1,5 +1,5 @@
 <?php
-namespace bilibili\raichu\Provider;
+namespace Raichu\Provider;
 /**
  * 会话控制sess基.
  * User: gukai@bilibili.com

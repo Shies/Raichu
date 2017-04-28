@@ -1,11 +1,11 @@
 <?php
 
-namespace bilibili\raichu\middleware\clockwork;
+namespace Raichu\Middleware\Clockwork;
 
-use bilibili\raichu\engine\App;
+use Raichu\Engine\App;
 use Clockwork\Clockwork;
+use Raichu\Engine\Middleware;
 use Clockwork\Storage\FileStorage;
-use bilibili\raichu\middleware\Middleware;
 
 class Monitor implements Middleware
 {

@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\engine\App;
+namespace Raichu\Engine;
+use Raichu\Engine\App;
 /**
  * 分发器.
  * User: Shies

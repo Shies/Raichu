@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\engine\Router;
+namespace Raichu\Engine;
+use Raichu\Engine\Router;
 /**
  * 装载器,支持自动/手动.
  * User: gukai@bilibili.com

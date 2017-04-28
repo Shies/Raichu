@@ -1,8 +1,8 @@
 <?php
 
-use bilibili\raichu\engine\Session;
-use bilibili\raichu\middleware\Middleware;
-use bilibili\raichu\engine\App;
+use Raichu\Engine\App;
+use Raichu\Provider\Session;
+use Raichu\Engine\Middleware;
 
 /**
  * 用户权限控制类

@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\engine\Model;
+namespace Raichu\Engine;
+use Raichu\Engine\Model;
 /**
  * 抽象模型基类.
  * User: gukai@bilibili.com

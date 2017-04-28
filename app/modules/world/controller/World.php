@@ -1,6 +1,6 @@
 <?php
-use bilibili\raichu\engine\AbstractController;
-use bilibili\raichu\engine\Loader;
+use Raichu\Engine\AbstractController;
+use Raichu\Engine\Loader;
 /**
  * 世界你好.
  * User: gukai@bilibili.com

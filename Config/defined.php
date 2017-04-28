@@ -10,12 +10,11 @@
 // 路径常量定义
 // -----------------------------------------------------------------------------
 // WEB 所在目录
-define('DOC_PATH', ROOT . '/public');
+define('DOC_PATH', ROOT . '/Public');
 // 项目所在目录
-define('APP_PATH', ROOT . '/app');
-define('MOD_PATH', ROOT . '/app/modules');
-define('TPL_PATH', ROOT . '/app/tpl');
-define('PROVIDER_PATH', ROOT . '/app/provider');
+define('MOD_PATH', ROOT . '/App/Modules');
+define('TPL_PATH', ROOT . '/App/Tpl');
+define('PROVIDER_PATH', ROOT . '/Provider');
 // 外部库所在目录
 define('DATA_PATH', ROOT . '/data');
 define('CACHE_PATH', ROOT . '/data/cache');
@@ -41,8 +40,8 @@ define('IS_CLI', (PHP_SAPI === 'cli'));
 // 定义是否 windows 环境
 define('IS_WIN', (DIRECTORY_SEPARATOR === '\\'));
 // 定义断言alert回调
-//define('ASSERT_ALERT',
-//    function ($file, $line, $code) {
-//        echo "<hr>Assertion Failed: File '$file'<br /> Line '$line'<br /> Code '$code'<br /><hr />";
-//    }
-//);
+define('ASSERT_ALERT',
+    function ($file, $line, $code) {
+        echo "<hr>Assertion Failed: File '$file'<br /> Line '$line'<br /> Code '$code'<br /><hr />";
+    }
+);

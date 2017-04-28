@@ -13,10 +13,10 @@
     },
     "autoload": {
         "classmap": [
-            "app/console",
-            "app/engine",
-            "app/middleware",
-            "app/provider"
+            "App/Console",
+            "App/Middleware",
+            "App/Provider",
+            "Engine"
         ]
     },
     "scripts": {

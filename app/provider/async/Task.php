@@ -1,5 +1,5 @@
 <?php
-require_once('CoroutineReturnValue.php');
+namespace Raichu\Provider\Async;
 /**
  * 实现yield堆栈
  * User: gukai@bilibili.com
@@ -43,14 +43,14 @@ class Task
             $value = $routine->current();
 
             // 嵌套的协程
-            if ($value instanceof Generator) {
+            if ($value instanceof \Generator) {
                 $this->stack->push($routine);
                 $routine = $value;
                 return;
             }
 
             // 协程的返回传送
-            if ($value instanceof \CoroutineReturnValue && $this->stack->count()) {
+            if ($value instanceof CoroutineReturnValue && $this->stack->count()) {
                 $routine = $this->stack->pop();
                 $routine->send($value->getValue());
                 return;

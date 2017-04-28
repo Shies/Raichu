@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\engine\Controller;
+namespace Raichu\Engine;
+use Raichu\Engine\Controller;
 /**
  * 抽象控制器基类.
  * User: gukai@bilibili.com

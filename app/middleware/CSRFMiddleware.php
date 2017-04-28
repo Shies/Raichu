@@ -1,7 +1,7 @@
 <?php
-use bilibili\raichu\middleware\Middleware;
-use bilibili\raichu\engine\Session;
-use bilibili\raichu\engine\App;
+use Raichu\Engine\App;
+use Raichu\Provider\Session;
+use Raichu\Engine\Middleware;
 /**
  * 检测csrf中间件.
  * User: gukai@bilibili.com

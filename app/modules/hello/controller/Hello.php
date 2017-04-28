@@ -1,6 +1,6 @@
 <?php
-use bilibili\raichu\engine\AbstractController;
-use bilibili\raichu\engine\Transport;
+use Raichu\Engine\AbstractController;
+use Raichu\Engine\Transport;
 /**
  * 你好世界.
  * User: gukai@bilibili.com
@@ -32,18 +32,15 @@ class HelloController extends AbstractController
 
     public function index($request)
     {
-        echo $this->hello() . PHP_EOL;
+        var_dump($this->getResponse()->ajaxReturn(['ok' => false]));
+        echo $request->get('id') ?: 0;
+        var_dump($this->hello()) . PHP_EOL;
     }
 
 
     public function logger()
     {
-        $t = new Transport([
-            'basePath' => '/tmp',
-            'logger' => 'manager',
-            'datetimeFormat' => 'Y:m:d H:i:s',
-        ]);
-        $t->use_local('error', 'im shies');
+        \Raichu\Provider\Logger::getInstance();
     }
 
 
@@ -56,12 +53,13 @@ class HelloController extends AbstractController
 
     private function hello()
     {
-        echo (new HelloModel())->shakehands();
+        return ((new HelloModel())->listen());
     }
 
 
     public function listen($request)
     {
+        echo $request->get('id') ?: 0;
         echo (new HelloProvider())->music();
     }
 

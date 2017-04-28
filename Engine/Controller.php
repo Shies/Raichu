@@ -1,5 +1,5 @@
 <?php
-namespace bilibili\raichu\engine;
+namespace Raichu\Engine;
 
 /**
  * 逻辑控制及Model/View交互
@@ -37,6 +37,18 @@ class Controller
     }
 
 
+    public function singleton($abstract, $concrete = null)
+    {
+        $this->app->bind($abstract, $concrete, true);
+    }
+
+
+    public function make($abstract, array $parameters = [])
+    {
+        return $this->app->make($abstract, $parameters);
+    }
+
+
     public function getView()
     {
         return $this->app->make("view");
@@ -46,12 +58,6 @@ class Controller
     public function getResponse()
     {
         return $this->app->make("response");
-    }
-
-
-    public function make($abstract, array $parameters = [])
-    {
-        return $this->app->make($abstract, $parameters);
     }
 
 }

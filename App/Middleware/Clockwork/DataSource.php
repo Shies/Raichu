@@ -1,13 +1,11 @@
 <?php
 
-namespace bilibili\raichu\middleware\clockwork;
+namespace Raichu\Middleware\Clockwork;
 
-use bilibili\raichu\engine\App;
+use Raichu\Engine\App;
 use Clockwork\DataSource\DataSource as DS;
 use Clockwork\Request\Request;
 use Clockwork\Request\Timeline;
-use bilibili\raichu\engine\Router;
-use bilibili\raichu\engine\Request as pRequest;
 
 /**
  * Data source for Pikachu, provides database queries and routes.

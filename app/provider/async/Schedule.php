@@ -1,5 +1,5 @@
 <?php
-require_once('Task.php');
+namespace Raichu\Provider\Async;
 /**
  * 使用yield实现异步非阻塞调度器
  * User: gukai@bilibili.com
@@ -28,7 +28,7 @@ class Schedule
         $this->startTick();
     }
 
-    public function stop(Generator $routine)
+    public function stop(\Generator $routine)
     {
         foreach ($this->routineList as $k => $task) {
             if ($task->getRoutine() == $routine) {

@@ -1,5 +1,5 @@
 <?php
-namespace bilibili\raichu\engine;
+namespace Raichu\Engine;
 
 /**
  * Container容器类，实现依赖注入

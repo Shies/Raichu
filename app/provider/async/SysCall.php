@@ -1,5 +1,5 @@
 <?php
-require_once('Schedule.php');
+namespace Raichu\Provider\Async;
 /**
  * 系统调用方便交出控制权进行通信.
  * User: gukai@bilibili.com

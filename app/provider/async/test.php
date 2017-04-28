@@ -1,5 +1,8 @@
 <?php
-require_once('SysCall.php');
+use Raichu\Provider\Async\Task;
+use Raichu\Provider\Async\Schedule;
+use Raichu\Provider\Async\SysCall;
+use Raichu\Provider\Async\CoroutineReturnValue;
 /**
  * 测试样板. (降低IO,提升吞吐,改善体验,性能可观)
  * User: gukai@bilibili.com

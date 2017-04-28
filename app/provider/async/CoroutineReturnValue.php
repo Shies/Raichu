@@ -1,4 +1,5 @@
 <?php
+namespace Raichu\Provider\Async;
 /**
  * 包装当前协程返回值
  * User: gukai@bilibili.com

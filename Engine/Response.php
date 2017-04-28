@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\engine\AbstractController;
+namespace Raichu\Engine;
+use Raichu\Engine\AbstractController;
 /**
  * 响应处理.
  * User: gukai@bilibili.com

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace bilibili\raichu\Provider;
+namespace Raichu\Provider;
 use \Exception;
 
 /**

@@ -1,6 +1,6 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\middleware\clockwork\Monitor;
+namespace Raichu\Engine;
+use Raichu\Middleware\Clockwork\Monitor;
 /**
  * 数据库CURD-Model.
  * User: gukai@bilibili.com

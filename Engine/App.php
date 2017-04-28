@@ -1,7 +1,7 @@
 <?php
-namespace bilibili\raichu\engine;
-use bilibili\raichu\middleware\clockwork\Monitor;
-use bilibili\raichu\middleware\clockwork\CacheStorage;
+namespace Raichu\Engine;
+use Raichu\Middleware\Clockwork\Monitor;
+use Raichu\Middleware\Clockwork\CacheStorage;
 
 /**
  * 应用业务逻辑抽象实例

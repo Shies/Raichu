@@ -1,5 +1,5 @@
 <?php
-use bilibili\raichu\engine\AbstractModel;
+use Raichu\Engine\AbstractModel;
 /**
  * 世界你好.
  * User: gukai@bilibili.com

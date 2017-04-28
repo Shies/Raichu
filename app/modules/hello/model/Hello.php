@@ -5,7 +5,8 @@
  * Date: 17/2/8
  * Time: 下午8:36
  */
-use bilibili\raichu\engine\AbstractModel;
+use Raichu\Engine\AbstractModel;
+use Raichu\Engine\App;
 
 class HelloModel extends AbstractModel
 {
@@ -29,7 +30,10 @@ class HelloModel extends AbstractModel
 
     public function listen()
     {
-        return 'sound of my dreams';
+        $model = App::getModel($this->_table);
+        $ret = $model->where(['module' => 'operation'])->find_array();
+
+        return $ret;
     }
 
 }
