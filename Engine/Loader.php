@@ -9,11 +9,23 @@ use Raichu\Engine\Router;
  */
 class Loader
 {
-
+    /**
+     * 返回已经加载的文件
+     * @var array
+     */
     protected static $loaded = [];
+
+    /**
+     * 当前加载模块
+     * @var string
+     */
     protected static $module;
 
 
+    /**
+     * Loader constructor.
+     * @param null $module
+     */
     public function __construct($module = null)
     {
         spl_autoload_register([$this, 'autoload']);
@@ -24,6 +36,12 @@ class Loader
     }
 
 
+    /**
+     * 返回已经加载的文件
+     *
+     * @param null $name
+     * @return array
+     */
     public static function loaded($name = null)
     {
         if (isset(static::$loaded[$name])) {
@@ -34,6 +52,14 @@ class Loader
     }
 
 
+    /**
+     * 载入指定模块的文件
+     *
+     * @param $fileName
+     * @param $blockName
+     * @param string $suffix
+     * @return bool
+     */
     public static function import($fileName, $blockName, $suffix = '.php')
     {
         if (isset(static::$loaded[$blockName][$fileName])) {
@@ -53,6 +79,13 @@ class Loader
     }
 
 
+    /**
+     * 载入指定文件函数
+     *
+     * @param $class
+     * @return array|bool
+     * @throws \Exception
+     */
     public function autoload($class)
     {
         if (in_array($class, spl_classes())) {
@@ -72,7 +105,12 @@ class Loader
         return static::$loaded;
     }
 
-
+    /**
+     * 递归载入模型文件函数
+     *
+     * @param $name
+     * @return bool|void
+     */
     public function model($name)
     {
         if (is_array($name)) {
@@ -96,6 +134,12 @@ class Loader
     }
 
 
+    /**
+     * 递归载入库文件函数
+     *
+     * @param $name
+     * @return bool|void
+     */
     public function provider($name)
     {
         if (is_array($name)) {
@@ -118,7 +162,12 @@ class Loader
         return static::import($name, $method);
     }
 
-
+    /**
+     * 递归载入控制器文件函数
+     *
+     * @param $name
+     * @return bool|void
+     */
     public function controller($name)
     {
         if (is_array($name)) {
