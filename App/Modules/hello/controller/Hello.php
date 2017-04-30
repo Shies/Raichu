@@ -10,35 +10,27 @@ use Raichu\Engine\App;
 class HelloController extends AbstractController
 {
 
-    protected $middleware;
-
-
     public function __construct()
     {
-        $this->middleware = function() {
-            echo App::middleware("HelloProvider", null);
-        };
         parent::__construct();
     }
 
 
-    /*
-    public function beforeExecuteRoute($dispatcher = null)
+    public function beforeExecuteRoute($dispatcher)
     {
-        return var_dump('foo') . PHP_EOL;
+        echo App::middleware("HelloProvider", null);
     }
 
 
-    public function afterExecuteRoute($dispatcher = null)
+    public function afterExecuteRoute($dispatcher)
     {
-        return var_dump('bar') . PHP_EOL;
+        // return var_dump('bar') . PHP_EOL;
     }
-    */
 
 
     public function index($request)
     {
-        return;
+        echo "Raichu";
     }
 
 

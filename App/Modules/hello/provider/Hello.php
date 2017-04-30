@@ -16,7 +16,7 @@ class HelloProvider
 
     public function middleware($middleware = null)
     {
-        return "Hello Raichu";
+        return "Hello ";
     }
 
 }
