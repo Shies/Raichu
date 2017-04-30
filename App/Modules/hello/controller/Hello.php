@@ -1,6 +1,6 @@
 <?php
 use Raichu\Engine\AbstractController;
-use Raichu\Engine\Transport;
+use Raichu\Engine\App;
 /**
  * 你好世界.
  * User: gukai@bilibili.com
@@ -10,8 +10,14 @@ use Raichu\Engine\Transport;
 class HelloController extends AbstractController
 {
 
+    protected $middleware;
+
+
     public function __construct()
     {
+        $this->middleware = function() {
+            echo App::middleware("HelloProvider", null);
+        };
         parent::__construct();
     }
 
@@ -32,9 +38,7 @@ class HelloController extends AbstractController
 
     public function index($request)
     {
-        var_dump($this->getResponse()->ajaxReturn(['ok' => false]));
-        echo $request->get('id') ?: 0;
-        var_dump($this->hello()) . PHP_EOL;
+        return;
     }
 
 
@@ -61,6 +65,7 @@ class HelloController extends AbstractController
     {
         echo $request->get('id') ?: 0;
         echo (new HelloProvider())->music();
+        exit;
     }
 
 }

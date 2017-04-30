@@ -178,8 +178,8 @@ class App extends Container
     {
         $instance = static::getInstance();
         if (!$is_static) {
-            $instance->singleton($cls, $cls);
-            return $instance->make($cls, [$middleware]);
+            $instance->bind($cls, $cls);
+            return $instance->make($cls)->middleware($middleware);
         }
 
         $cls::middleware($middleware);

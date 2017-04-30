@@ -13,4 +13,10 @@ class HelloProvider
         return 'sound of my dreams';
     }
 
+
+    public function middleware($middleware = null)
+    {
+        return "Hello Raichu";
+    }
+
 }
