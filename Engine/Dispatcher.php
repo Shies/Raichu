@@ -18,8 +18,8 @@ class Dispatcher
     protected $instantly_flush;
 
 
+    protected $params;
     protected $object = [];
-    protected $params = [];
     // four segment
     protected $route = [];
 

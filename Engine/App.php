@@ -176,12 +176,13 @@ class App extends Container
      */
     public static function middleware($cls, $middleware, $is_static = false)
     {
-        $cls = ucfirst($cls);
+        $instance = static::getInstance();
         if (!$is_static) {
-            (new $cls())->middleware($middleware);
-        } else {
-            $cls::middleware($middleware);
+            $instance->singleton($cls, $cls);
+            return $instance->make($cls, [$middleware]);
         }
+
+        $cls::middleware($middleware);
     }
 
 }
