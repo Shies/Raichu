@@ -17,11 +17,8 @@ class Dispatcher
     protected $auto_render;
     protected $instantly_flush;
 
-
     protected $params;
     protected $object = [];
-    // four segment
-    protected $route = [];
 
 
     /**
