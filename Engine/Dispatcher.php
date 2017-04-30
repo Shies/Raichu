@@ -12,12 +12,14 @@ class Dispatcher
 
     protected $router;
     protected $request;
-    protected $provider;
-
     protected $view;
+
     protected $auto_render;
     protected $instantly_flush;
 
+
+    protected $object = [];
+    protected $params = [];
     // four segment
     protected $route = [];
 
@@ -74,57 +76,75 @@ class Dispatcher
     }
 
     /**
-     * 通过调度器执行Request
+     * 通过调度器执行Request/Middleware
      *
      * @param callable $request
      * @return bool
      */
-    public function dispatch(callable $request)
+    public function dispatch($request)
     {
         $this->router->run($request);
         return true;
     }
 
 
-    public function getNameSpace($var)
+    /**
+     * 设置对象的参数
+     * @param array $params
+     */
+    public function setParams(array $params)
     {
-        $namespace = null;
-        if (!is_object($this->router)) {
-            return $this;
+        $this->params = $params;
+    }
+
+
+    /**
+     * 获取对象的参数
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+
+    /**
+     * 设置一个指定对象
+     *
+     * @param $name string
+     * @param $value mixed
+     */
+    public function setObject($name, $value)
+    {
+        $this->object[$name] = $value;
+    }
+
+
+    /**
+     * 获取一个指定对象
+     *
+     * @param $name string
+     * @return bool
+     */
+    public function getObject($name)
+    {
+        if (!$this->hasObject($name)) {
+            return false;
         }
 
-        if (method_exists($this->router, 'nameSpace')) {
-            $namespace = $this->router->nameSpace($var);
-        }
-
-        return $this->route['namespace'] = $namespace;
+        return $this->object[$name];
     }
 
 
-    public function getModules()
+    /**
+     * 判断是否存在对象
+     *
+     * @param $name
+     * @return bool
+     */
+    public function hasObject($name)
     {
-        $this->route['modules'] = $this->router->fetchModules();
-        return $this;
-    }
-
-
-    private function getController()
-    {
-        $this->route['controller'] = $this->router->fetchController();
-        return $this;
-    }
-
-
-    private function getMethod()
-    {
-        $this->route['method'] = $this->router->fetchMethod();
-        return $this;
-    }
-
-
-    public function getRoute()
-    {
-        return $this->route;
+        return isset($this->object[$name]);
     }
 
 }
