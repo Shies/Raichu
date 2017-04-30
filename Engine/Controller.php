@@ -11,22 +11,22 @@ class Controller
 {
 
     /**
-     * 默认单利对象
-     * @var aray
+     * 初始化Application实例
+     * @var object
      */
-    protected $singleton;
+    protected $app;
 
     /**
      * 默认绑定对象
      * @var array
      */
-    protected $autobind;
+    protected $autobind = [];
 
     /**
-     * 初始化Application实例
-     * @var object
+     * 默认单利对象
+     * @var aray
      */
-    protected $app;
+    protected $singleton = [];
 
 
 
