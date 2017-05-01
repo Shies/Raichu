@@ -13,10 +13,10 @@ class WorldController extends AbstractController
     public function __construct()
     {
         parent::initialize();
-        $l = new Loader('hello');
-        $l->model('hello');
-        $l->provider('hello');
-        $l->controller('hello');
+        $l = new Loader('Hello');
+        $l->model("Hello");
+        $l->provider("Hello");
+        $l->controller("Hello");
     }
 
 

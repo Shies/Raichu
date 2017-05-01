@@ -11,8 +11,8 @@ class Dispatcher
 {
 
     protected $router;
-    protected $request;
     protected $view;
+    protected $app;
 
     protected $auto_render;
     protected $instantly_flush;
@@ -27,8 +27,8 @@ class Dispatcher
      */
     public function __construct(App $app)
     {
+        $this->app = $app;
         $this->router = $app->getRouter();
-        $this->request = $app->getRequest();
         $this->view = $app->getView();
     }
 
@@ -86,6 +86,18 @@ class Dispatcher
 
 
     /**
+     * 通过调度器设置中间件
+     *
+     * @param $cls
+     * @param $middleware
+     */
+    public function middleware($cls, $middleware)
+    {
+        App::middleware($cls, $middleware);
+    }
+
+
+    /**
      * 设置对象的参数
      * @param array $params
      */
@@ -113,7 +125,7 @@ class Dispatcher
      */
     public function setObject($name, $value)
     {
-        $this->object[$name] = $value;
+        $this->app->$name = $value;
     }
 
 
@@ -129,7 +141,7 @@ class Dispatcher
             return false;
         }
 
-        return $this->object[$name];
+        return $this->app->$name;
     }
 
 
@@ -139,9 +151,9 @@ class Dispatcher
      * @param $name
      * @return bool
      */
-    public function hasObject($name)
+    private function hasObject($name)
     {
-        return isset($this->object[$name]);
+        return isset($this->app->$name);
     }
 
 }
