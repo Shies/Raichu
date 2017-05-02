@@ -11,12 +11,23 @@ class Controller
 {
 
     /**
-     * $app 初始化APP实例
-     * $middleware 初始化中间件对象
-     *
+     * 初始化Application实例
      * @var object
      */
-    protected $app, $middleware;
+    protected $app;
+
+    /**
+     * 默认绑定对象
+     * @var array
+     */
+    protected $autobind = [];
+
+    /**
+     * 默认单利对象
+     * @var aray
+     */
+    protected $singleton = [];
+
 
 
     /**
@@ -26,37 +37,11 @@ class Controller
     public function __construct()
     {
         $this->app = App::getInstance();
-        if ($this->middleware) {
-            $middleware = $this->middleware;
-            if (is_array($middleware)) {
-                $middleware[0] = new $middleware[0]();
-            }
-            call_user_func($middleware);
-        }
+        array_map([$this->app, "bind"], $this->autobind);
+        array_map([$this->app, "singleton"], $this->singleton);
     }
 
-    /**
-     * 初始化当前中间件对象
-     * @param $middleware
-     */
-    public function middleware($middleware)
-    {
-        if (is_string($middleware) && strstr($middleware, '@')) {
-            $middleware = explode('@', $middleware);
-        }
-        $this->middleware = $middleware;
-    }
 
-    /**
-     * 绑定单利对象名
-     *
-     * @param $abstract
-     * @param null $concrete
-     */
-    public function singleton($abstract, $concrete = null)
-    {
-        $this->app->bind($abstract, $concrete, true);
-    }
 
     /**
      * 构建单利对象
@@ -85,7 +70,8 @@ class Controller
      */
     public function getResponse()
     {
-        return $this->app->make("response");
+        $response = $this->app->make("response");
+        return $response;
     }
 
 }

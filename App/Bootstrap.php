@@ -10,7 +10,7 @@ Session::config();
 assert_options(ASSERT_ACTIVE, true);
 assert_options(ASSERT_WARNING, true);
 assert_options(ASSERT_BAIL, true);
-assert_options(ASSERT_CALLBACK, ASSERT_ALERT);
+// assert_options(ASSERT_CALLBACK, ASSERT_ALERT);
 
 
 $app = App::getInstance();

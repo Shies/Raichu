@@ -1,6 +1,6 @@
 <?php
 use Raichu\Engine\AbstractController;
-use Raichu\Engine\Transport;
+use Raichu\Engine\App;
 /**
  * 你好世界.
  * User: gukai@bilibili.com
@@ -16,25 +16,21 @@ class HelloController extends AbstractController
     }
 
 
-    /*
-    public function beforeExecuteRoute($dispatcher = null)
+    public function beforeExecuteRoute($dispatcher)
     {
-        return var_dump('foo') . PHP_EOL;
+        echo App::middleware("HelloProvider", null);
     }
 
 
-    public function afterExecuteRoute($dispatcher = null)
+    public function afterExecuteRoute($dispatcher)
     {
-        return var_dump('bar') . PHP_EOL;
+        // return var_dump('bar') . PHP_EOL;
     }
-    */
 
 
     public function index($request)
     {
-        var_dump($this->getResponse()->ajaxReturn(['ok' => false]));
-        echo $request->get('id') ?: 0;
-        var_dump($this->hello()) . PHP_EOL;
+        echo "Raichu";
     }
 
 
@@ -61,6 +57,7 @@ class HelloController extends AbstractController
     {
         echo $request->get('id') ?: 0;
         echo (new HelloProvider())->music();
+        exit;
     }
 
 }

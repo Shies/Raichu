@@ -75,7 +75,7 @@ class Loader
         }
 
         static::$loaded[$blockName][$fileName] = 1;
-        include $files;
+        include_once $files;
     }
 
 
