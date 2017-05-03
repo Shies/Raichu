@@ -30,7 +30,11 @@ class HelloController extends AbstractController
 
     public function index($request)
     {
-        echo "Raichu";
+        $this->make("dispatcher")->forward(
+            [
+                "action" => "shakehands"
+            ]
+        );
     }
 
 

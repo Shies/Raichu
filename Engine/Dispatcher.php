@@ -13,8 +13,6 @@ class Dispatcher
     protected $router;
     protected $view;
     protected $app;
-
-    protected $auto_render;
     protected $instantly_flush;
 
 
@@ -38,17 +36,17 @@ class Dispatcher
      * @param bool|false $display
      * @return bool|null
      */
-    public function render($name, $data = [], $display = false)
+    public function render($name, $data = [], $display = true)
     {
         if (defined('TPL_PATH')) {
             $this->view->setPath(TPL_PATH);
         }
 
         $buffer = NULL;
-        if ($display === false) {
-            $buffer = $this->view->render($name, $data, $display);
+        if ($display === true) {
+            $this->view->render($name, $data, $display);
         } else {
-            $buffer = $this->auto_render ?: false;
+            $buffer = $this->view->render($name, $data, $display);
         }
 
         if ($this->instantly_flush) {
@@ -83,34 +81,6 @@ class Dispatcher
 
 
     /**
-     * controller => Hello,
-     * action => index,
-     * params => [1, 2, 3]
-     * 控制器之间互相回调
-     *
-     * @return array
-     */
-    public function forward(array $url)
-    {
-        $controller = !empty($url[0]) ? $url[0]."Controller" : "HelloController";
-        $method = !empty($url[1]) ? $url[1] : "index";
-        $args = !empty($url[2]) ? $url[2] : NULL;
-
-        // create controller instance and call the specified method
-        $cont = new $controller;
-        if (1 === count($args)) {
-            $cont->$method($this->app->getRequest(), $args[0]);
-        } elseif (2 === count($args)) {
-            $cont->$method($this->app->getRequest(), $args[0], $args[1]);
-        } else {
-            $cont->$method($this->app->getRequest());
-        }
-
-        return true;
-    }
-
-
-    /**
      * 设置对象的参数
      * @param array $params
      */
@@ -129,6 +99,38 @@ class Dispatcher
     public function middleware($cls, $middleware)
     {
         App::middleware($cls, $middleware);
+    }
+
+
+    /**
+     * controller => Hello,
+     * action => index,
+     * params => [1, 2, 3]
+     * 控制器之间互相回调
+     *
+     * @return array
+     */
+    public function forward(array $url)
+    {
+        $args = !empty($url['params']) ? $url['params'] : NULL;
+        $method = !empty($url['action']) ? $url['action'] : "index";
+        $controller = !empty($url['controller']) ? $url['controller'] : "HelloController";
+
+        // create controller instance and call the specified method
+        $cont = new $controller;
+
+        try {
+            $ref = new \ReflectionMethod($controller, $method);
+            if (1 == count($args)) {
+                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0]]);
+            } elseif (2 == count($args)) {
+                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0], $args[1]]);
+            } else {
+                $ref->invokeArgs($cont, [$this->app->getRequest()]);
+            }
+        } catch(\Exception $e) {
+            return false;
+        }
     }
 
 
