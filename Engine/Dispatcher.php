@@ -17,9 +17,6 @@ class Dispatcher
     protected $auto_render;
     protected $instantly_flush;
 
-    protected $params;
-    protected $object = [];
-
 
     /**
      * Dispatcher constructor.
@@ -86,6 +83,44 @@ class Dispatcher
 
 
     /**
+     * "controller" => "Hello"
+     * "action" => "index",
+     * "params" => [1, 2, 3]
+     * 获取对象的参数
+     *
+     * @return array
+     */
+    public function forward(array $url)
+    {
+        $controller = !empty($url[0]) ? $url[0]."Controller" : "HelloController";
+        $method = !empty($url[1]) ? $url[1] : "index";
+        $args = !empty($url[2]) ? $url[2] : NULL;
+
+        // create controller instance and call the specified method
+        $cont = new $controller;
+        if (1 === count($args)) {
+            $cont->$method($this->app->getRequest(), $args[0]);
+        } elseif (2 === count($args)) {
+            $cont->$method($this->app->getRequest(), $args[0], $args[1]);
+        } else {
+            $cont->$method($this->app->getRequest());
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 设置对象的参数
+     * @param array $params
+     */
+    public function getDI()
+    {
+        return $this->app;
+    }
+
+
+    /**
      * 通过调度器设置中间件
      *
      * @param $cls
@@ -96,64 +131,5 @@ class Dispatcher
         App::middleware($cls, $middleware);
     }
 
-
-    /**
-     * 设置对象的参数
-     * @param array $params
-     */
-    public function setParams(array $params)
-    {
-        $this->params = $params;
-    }
-
-
-    /**
-     * 获取对象的参数
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-
-    /**
-     * 设置一个指定对象
-     *
-     * @param $name string
-     * @param $value mixed
-     */
-    public function setObject($name, $value)
-    {
-        $this->app->$name = $value;
-    }
-
-
-    /**
-     * 获取一个指定对象
-     *
-     * @param $name string
-     * @return bool
-     */
-    public function getObject($name)
-    {
-        if (!$this->hasObject($name)) {
-            return false;
-        }
-
-        return $this->app->$name;
-    }
-
-
-    /**
-     * 判断是否存在对象
-     *
-     * @param $name
-     * @return bool
-     */
-    private function hasObject($name)
-    {
-        return isset($this->app->$name);
-    }
 
 }

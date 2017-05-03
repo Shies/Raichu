@@ -55,6 +55,7 @@ class Controller
         return $this->app->make($abstract, $parameters);
     }
 
+
     /**
      * 初始化视图对象
      * @return mixed
@@ -63,6 +64,8 @@ class Controller
     {
         return $this->app->make("view");
     }
+
+
 
     /**
      * 初始化响应对象
