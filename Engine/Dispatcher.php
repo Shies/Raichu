@@ -13,12 +13,7 @@ class Dispatcher
     protected $router;
     protected $view;
     protected $app;
-
-    protected $auto_render;
     protected $instantly_flush;
-
-    protected $params;
-    protected $object = [];
 
 
     /**
@@ -41,17 +36,17 @@ class Dispatcher
      * @param bool|false $display
      * @return bool|null
      */
-    public function render($name, $data = [], $display = false)
+    public function render($name, $data = [], $display = true)
     {
         if (defined('TPL_PATH')) {
             $this->view->setPath(TPL_PATH);
         }
 
         $buffer = NULL;
-        if ($display === false) {
-            $buffer = $this->view->render($name, $data, $display);
+        if ($display === true) {
+            $this->view->render($name, $data, $display);
         } else {
-            $buffer = $this->auto_render ?: false;
+            $buffer = $this->view->render($name, $data, $display);
         }
 
         if ($this->instantly_flush) {
@@ -86,6 +81,16 @@ class Dispatcher
 
 
     /**
+     * 设置对象的参数
+     * @param array $params
+     */
+    public function getDI()
+    {
+        return $this->app;
+    }
+
+
+    /**
      * 通过调度器设置中间件
      *
      * @param $cls
@@ -98,62 +103,35 @@ class Dispatcher
 
 
     /**
-     * 设置对象的参数
-     * @param array $params
-     */
-    public function setParams(array $params)
-    {
-        $this->params = $params;
-    }
-
-
-    /**
-     * 获取对象的参数
+     * controller => Hello,
+     * action => index,
+     * params => [1, 2, 3]
+     * 控制器之间互相回调
+     *
      * @return array
      */
-    public function getParams()
+    public function forward(array $url)
     {
-        return $this->params;
-    }
+        $args = !empty($url['params']) ? $url['params'] : NULL;
+        $method = !empty($url['action']) ? $url['action'] : "index";
+        $controller = !empty($url['controller']) ? $url['controller'] : "HelloController";
 
+        // create controller instance and call the specified method
+        $cont = new $controller;
 
-    /**
-     * 设置一个指定对象
-     *
-     * @param $name string
-     * @param $value mixed
-     */
-    public function setObject($name, $value)
-    {
-        $this->app->$name = $value;
-    }
-
-
-    /**
-     * 获取一个指定对象
-     *
-     * @param $name string
-     * @return bool
-     */
-    public function getObject($name)
-    {
-        if (!$this->hasObject($name)) {
+        try {
+            $ref = new \ReflectionMethod($controller, $method);
+            if (1 == count($args)) {
+                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0]]);
+            } elseif (2 == count($args)) {
+                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0], $args[1]]);
+            } else {
+                $ref->invokeArgs($cont, [$this->app->getRequest()]);
+            }
+        } catch(\Exception $e) {
             return false;
         }
-
-        return $this->app->$name;
     }
 
-
-    /**
-     * 判断是否存在对象
-     *
-     * @param $name
-     * @return bool
-     */
-    private function hasObject($name)
-    {
-        return isset($this->app->$name);
-    }
 
 }
