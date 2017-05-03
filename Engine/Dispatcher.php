@@ -83,10 +83,10 @@ class Dispatcher
 
 
     /**
-     * "controller" => "Hello"
-     * "action" => "index",
-     * "params" => [1, 2, 3]
-     * 获取对象的参数
+     * controller => Hello,
+     * action => index,
+     * params => [1, 2, 3]
+     * 控制器之间互相回调
      *
      * @return array
      */
