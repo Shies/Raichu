@@ -117,7 +117,7 @@ class Dispatcher
      */
     public function forward(array $url)
     {
-        $this->getParams($url);
+        $this->parseSegment($url);
 
         // create controller instance and call the specified method
         $cont = (new $this->controller);
@@ -157,7 +157,7 @@ class Dispatcher
      * 获取URL参数
      * @param array $url
      */
-    private function getParams(array $url)
+    private function parseSegment(array $url)
     {
         $this->method = $this->getMethod($url);
         $this->controller = $this->getController($url);
