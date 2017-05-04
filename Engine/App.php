@@ -136,9 +136,9 @@ class App extends Container
      * @param null $modules
      * @return mixed
      */
-    public function autoload($modules = null)
+    public function autoload()
     {
-        return $this->make("loader", [$modules]);
+        return $this->make("loader");
     }
 
     /**

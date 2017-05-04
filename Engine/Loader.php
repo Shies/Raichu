@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-use Raichu\Engine\Router;
 /**
  * 装载器,支持自动/手动.
  * User: gukai@bilibili.com
@@ -15,24 +14,14 @@ class Loader
      */
     protected static $loaded = [];
 
-    /**
-     * 当前加载模块
-     * @var string
-     */
-    protected static $module;
-
 
     /**
      * Loader constructor.
      * @param null $module
      */
-    public function __construct($module = null)
+    public function __construct()
     {
-        spl_autoload_register([$this, 'autoload']);
-        if (!$module) {
-            $module = App::getInstance()->getRouter()->fetchModules();
-        }
-        static::$module = $module;
+        \spl_autoload_register([$this, 'autoload']);
     }
 
 
@@ -69,13 +58,23 @@ class Loader
         $blockName = strtolower($blockName);
         $fileName = ucfirst(trim($fileName, 'php')).$suffix;
 
-        $files = PROVIDER_PATH.DS.$fileName;
-        if (!file_exists($files)) {
-            $files = MOD_PATH.DS. static::$module .DS.$blockName.DS.$fileName;
+        $files = PROVIDER_PATH.DS.'*';
+        foreach (glob($files) AS $val) {
+            if (basename($val) == $fileName) {
+                include_once $val;
+                break;
+            }
+        }
+
+        $files = MOD_PATH.DS.'*'.DS. $blockName .DS. $fileName;
+        foreach (glob($files) AS $val) {
+            if (basename($val) == $fileName) {
+                include_once $val;
+                break;
+            }
         }
 
         static::$loaded[$blockName][$fileName] = 1;
-        include_once $files;
     }
 
 
