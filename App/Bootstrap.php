@@ -32,11 +32,11 @@ $app->dispatcher()->parseUrl();
 $router = $app->getRouter();
 
 // Init Loader
-$app->autoload($router->fetchModules());
+$app->autoload();
 
 
 try {
-    $files = ROOT.'/Modules/*/route*.*';
+    $files = ROOT.'/App/Modules/*/route*.*';
     foreach (glob($files) AS $val) {
         require_once $val;
     }
