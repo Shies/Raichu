@@ -15,6 +15,10 @@ class Dispatcher
     protected $app;
     protected $instantly_flush;
 
+    protected $controller;
+    protected $method;
+    protected $args = [];
+
 
     /**
      * Dispatcher constructor.
@@ -102,6 +106,7 @@ class Dispatcher
     }
 
 
+
     /**
      * controller => Hello,
      * action => index,
@@ -112,25 +117,79 @@ class Dispatcher
      */
     public function forward(array $url)
     {
-        $args = !empty($url['params']) ? $url['params'] : NULL;
-        $method = !empty($url['action']) ? $url['action'] : "index";
-        $controller = !empty($url['controller']) ? $url['controller'] : "HelloController";
+        $this->getParams($url);
 
         // create controller instance and call the specified method
-        $cont = new $controller;
+        $cont = (new $this->controller);
 
         try {
-            $ref = new \ReflectionMethod($controller, $method);
-            if (1 == count($args)) {
-                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0]]);
-            } elseif (2 == count($args)) {
-                $ref->invokeArgs($cont, [$this->app->getRequest(), $args[0], $args[1]]);
+            $ref = new \ReflectionMethod($this->controller, $this->method);
+            $args = $ref->getParameters();
+
+            $first = array_shift($args);
+            if (isset($first->name)) {
+                if ($first->name == "request") {
+                    $first = $this->app->getRequest();
+                } else {
+                    $first = array_shift($this->args);
+                }
+            }
+
+            if ($first) {
+                $args = $this->args;
+                if (0 == count($args)) {
+                    $ref->invokeArgs($cont, [$first]);
+                } elseif (1 == count($args)) {
+                    $ref->invokeArgs($cont, [$first, $args[0]]);
+                } elseif (2 == count($args)) {
+                    $ref->invokeArgs($cont, [$first, $args[0], $args[1]]);
+                }
             } else {
-                $ref->invokeArgs($cont, [$this->app->getRequest()]);
+                $ref->invokeArgs($cont, []);
             }
         } catch(\Exception $e) {
             return false;
         }
+    }
+
+
+    /**
+     * 获取URL参数
+     * @param array $url
+     */
+    private function getParams(array $url)
+    {
+        $this->method = $this->getMethod($url);
+        $this->controller = $this->getController($url);
+        $this->args = isset($url['params']) ? $url['params'] : null;
+    }
+
+
+    /**
+     * 获取URL中的Action
+     *
+     * @param null $action
+     * @return null|string
+     */
+    public function getMethod(array $url)
+    {
+        return isset($url['action']) ? $url['action'] : 'index';
+    }
+
+
+    /**
+     * 获取Url中的Controller
+     *
+     * @param null $control
+     * @return null|string
+     */
+    public function getController(array $url)
+    {
+        if (!isset($url['controller'])) {
+            return get_class(AbstractController::getInstance());
+        }
+
+        return $url['controller'];
     }
 
 

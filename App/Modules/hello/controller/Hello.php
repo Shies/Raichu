@@ -30,7 +30,7 @@ class HelloController extends AbstractController
 
     public function index($request)
     {
-        App::getInstance()->dispatcher()->forward(["action" => "shakehands"]);
+        $this->app->dispatcher()->forward(["action" => "shakehands"]);
     }
 
 
