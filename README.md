@@ -67,5 +67,5 @@ Document of Raichu
 │       ├── Logger.php\
 │       └── Session.php\
 ├── composer.json\
-└── tool\
+└── tool
 

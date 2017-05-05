@@ -102,7 +102,7 @@ class Dispatcher
      */
     public function middleware($cls, $middleware)
     {
-        App::middleware($cls, $middleware);
+        App::middleware($cls, $middleware, false);
     }
 
 
