@@ -55,9 +55,9 @@ class Router
     }
 
 
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app = $app;
+        $this->app = App::getInstance();
     }
 
 

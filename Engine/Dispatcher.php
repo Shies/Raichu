@@ -24,11 +24,11 @@ class Dispatcher
      * Dispatcher constructor.
      * @param \Raichu\Engine\App $app
      */
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app = $app;
-        $this->router = $app->getRouter();
-        $this->view = $app->getView();
+        $this->app = App::getInstance();
+        $this->router = $this->app->getRouter();
+        $this->view = $this->app->getView();
     }
 
 

@@ -118,7 +118,7 @@ class App extends Container
      */
     public function getRouter()
     {
-        return $this->make("router", [$this]);
+        return $this->make("router");
     }
 
     /**
@@ -127,7 +127,7 @@ class App extends Container
      */
     public function dispatcher()
     {
-        return $this->make("dispatcher", [$this]);
+        return $this->make("dispatcher");
     }
 
     /**
