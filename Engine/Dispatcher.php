@@ -159,37 +159,11 @@ class Dispatcher
      */
     private function parseSegment(array $url)
     {
-        $this->method = $this->getMethod($url);
-        $this->controller = $this->getController($url);
         $this->args = isset($url['params']) ? $url['params'] : null;
-    }
-
-
-    /**
-     * 获取URL中的Action
-     *
-     * @param null $action
-     * @return null|string
-     */
-    public function getMethod(array $url)
-    {
-        return isset($url['action']) ? $url['action'] : 'index';
-    }
-
-
-    /**
-     * 获取Url中的Controller
-     *
-     * @param null $control
-     * @return null|string
-     */
-    public function getController(array $url)
-    {
-        if (!isset($url['controller'])) {
-            return get_class(AbstractController::getInstance());
-        }
-
-        return $url['controller'];
+        $this->method = isset($url['action']) ? $url['action'] : 'index';
+        $this->controller = isset($url['controller'])
+            ? $url['controller']
+            : get_class(AbstractController::getInstance());
     }
 
 
