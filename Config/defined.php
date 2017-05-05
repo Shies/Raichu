@@ -10,14 +10,14 @@
 // 路径常量定义
 // -----------------------------------------------------------------------------
 // WEB 所在目录
-define('DOC_PATH', ROOT . '/Public');
+define('DOC_PATH', ROOT. '/Public');
 // 项目所在目录
-define('MOD_PATH', ROOT . '/App/Modules');
-define('TPL_PATH', ROOT . '/App/Tpl');
-define('PROVIDER_PATH', ROOT . '/Provider');
+define('MOD_PATH', ROOT. '/App/Modules');
+define('TPL_PATH', ROOT. '/App/Tpl');
+define('PROVIDER_PATH', ROOT. '/System/Provider');
 // 外部库所在目录
-define('DATA_PATH', ROOT . '/data');
-define('CACHE_PATH', ROOT . '/data/cache');
+define('DATA_PATH', ROOT. '/data');
+define('CACHE_PATH', ROOT. '/data/cache');
 define('DS', '/');
 define('IN_ROOT', true);
 define('StartTime', microtime(true));
