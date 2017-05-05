@@ -3,8 +3,8 @@
 namespace Raichu\Middleware\Clockwork;
 
 use Raichu\Engine\App;
-use Clockwork\Clockwork;
 use Raichu\Engine\Middleware;
+use Clockwork\Clockwork;
 use Clockwork\Storage\FileStorage;
 
 class Monitor implements Middleware
