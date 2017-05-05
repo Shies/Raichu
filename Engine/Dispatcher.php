@@ -66,7 +66,7 @@ class Dispatcher
      * 调度器解析RouterURL
      * @return void
      */
-    public function parseUrl()
+    public function parseRouterUrl()
     {
         $this->router->parseUrl();
     }
@@ -130,13 +130,16 @@ class Dispatcher
             if (isset($first->name)) {
                 if ($first->name == "request") {
                     $first = $this->app->getRequest();
-                } else {
-                    $first = array_shift($this->args);
                 }
             }
 
+            // 如果第一个参数不是request,证明是普通参数
+            $args = $this->args;
+            if (!$first instanceof Request) {
+                $first = array_shift($args);
+            }
+
             if ($first) {
-                $args = $this->args;
                 if (0 == count($args)) {
                     $ref->invokeArgs($cont, [$first]);
                 } elseif (1 == count($args)) {
