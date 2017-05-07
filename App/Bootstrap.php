@@ -26,7 +26,7 @@ $options = include ROOT . '/Config/database.php';
 $app->setDB($options);
 
 // Init Dispacher
-$app->dispatcher()->parseUrl();
+$app->dispatcher()->parseRouterUrl();
 
 // Init Router
 $router = $app->getRouter();

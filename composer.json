@@ -15,8 +15,9 @@
         "classmap": [
             "App/Console",
             "App/Middleware",
-            "App/Provider",
-            "Engine"
+            "System/Provider",
+            "System/Engine",
+            "System/Middleware"
         ]
     },
     "scripts": {

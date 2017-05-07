@@ -45,7 +45,12 @@ class Router
     protected $routeInfo = [];
 
 
-
+    /**
+     * 反射访问指定的函数
+     *
+     * @param $method
+     * @param $params
+     */
     public function __call($method, $params)
     {
         $accept_method = array('get', 'post', 'patch', 'delete', 'put', 'options');
@@ -55,12 +60,19 @@ class Router
     }
 
 
-    public function __construct(App $app)
+    /**
+     * 初始化APPDI对象
+     * Router constructor.
+     */
+    public function __construct()
     {
-        $this->app = $app;
+        $this->app = App::getInstance();
     }
 
 
+    /**
+     * 解析当前router地址 非restful
+     */
     public function parseUrl()
     {
         if (!headers_sent()) {
@@ -106,6 +118,12 @@ class Router
     }
 
 
+    /**
+     * 默认处理当前routerURL
+     *
+     * @param null $request
+     * @return bool
+     */
     public function autoHandle($request = null)
     {
         if (!isset($this->app->config['modules'])) {
@@ -162,7 +180,12 @@ _return:
     }
 
 
-
+    /**
+     * 获取当前请求模块
+     *
+     * @param string $slash
+     * @return mixed|null|string
+     */
     public function fetchModules($slash = DIRECTORY_SEPARATOR)
     {
         $uri = $this->app->make("request")->getUrlPath();
@@ -188,14 +211,20 @@ _return:
     }
 
 
-
+    /**
+     * 获取当前请求控制器
+     * @return string
+     */
     public function fetchController()
     {
         return ucfirst(static::$controller) . 'Controller';
     }
 
 
-
+    /**
+     * 获取当前请求方法
+     * @return string
+     */
     public function fetchMethod()
     {
         if (!static::$method) {
@@ -206,7 +235,10 @@ _return:
     }
 
 
-
+    /**
+     * 获取当前请求参数
+     * @return array
+     */
     public function fetchParams()
     {
         if (

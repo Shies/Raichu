@@ -37,14 +37,34 @@ class Controller
     public function __construct()
     {
         $this->app = App::getInstance();
-        array_map([$this->app, "bind"], $this->autobind);
-        array_map([$this->app, "singleton"], $this->singleton);
+        $this->initialize();
     }
 
 
+    /**
+     * 绑定或者单利对象
+     * @return bool
+     */
+    public function initialize()
+    {
+        if ($this->autobind) {
+            foreach ($this->autobind AS $key => $val) {
+                $this->app->bind($key, $val);
+            }
+        }
+
+        if ($this->singleton) {
+            foreach ($this->singleton AS $key => $val) {
+                $this->app->singleton($key, $val);
+            }
+        }
+
+        return (true);
+    }
+
 
     /**
-     * 构建单利对象
+     * 构建单利或者普通对象
      *
      * @param $abstract
      * @param array $parameters
@@ -73,8 +93,7 @@ class Controller
      */
     public function getResponse()
     {
-        $response = $this->app->make("response");
-        return $response;
+        return $this->app->make("response");
     }
 
 }

@@ -9,9 +9,19 @@ namespace Raichu\Engine;
 class Request
 {
 
+    /**
+     * 获取请求头相关的参数
+     * @var array
+     */
     protected static $_headers;
 
 
+    /**
+     * 根据指定名称得到请求头相关参数
+     *
+     * @param string $name
+     * @return array|string
+     */
     public static function getHeader($name = '')
     {
         if (static::$_headers == null) {
@@ -35,12 +45,20 @@ class Request
     }
 
 
+    /**
+     * 获取当前访问的URL
+     * @return mixed
+     */
     public function getUrl()
     {
         return $_SERVER['REQUEST_URI'];
     }
 
 
+    /**
+     * 获取请求路径，用于路由模块
+     * @return string
+     */
     public function getUrlPath()
     {
         $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)).'/';
@@ -56,6 +74,10 @@ class Request
     }
 
 
+    /**
+     * 获取请求方法
+     * @return string
+     */
     public function getMethod()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -74,6 +96,10 @@ class Request
     }
 
 
+    /**
+     * 判断当前是否AJAX请求
+     * @return bool
+     */
     public function isAjax()
     {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';

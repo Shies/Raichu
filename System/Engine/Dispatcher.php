@@ -24,11 +24,11 @@ class Dispatcher
      * Dispatcher constructor.
      * @param \Raichu\Engine\App $app
      */
-    public function __construct(App $app)
+    public function __construct()
     {
-        $this->app = $app;
-        $this->router = $app->getRouter();
-        $this->view = $app->getView();
+        $this->app = App::getInstance();
+        $this->router = $this->app->getRouter();
+        $this->view = $this->app->getView();
     }
 
 
@@ -66,7 +66,7 @@ class Dispatcher
      * 调度器解析RouterURL
      * @return void
      */
-    public function parseUrl()
+    public function parseRouterUrl()
     {
         $this->router->parseUrl();
     }
@@ -102,7 +102,7 @@ class Dispatcher
      */
     public function middleware($cls, $middleware)
     {
-        App::middleware($cls, $middleware);
+        App::middleware($cls, $middleware, false);
     }
 
 
@@ -130,13 +130,16 @@ class Dispatcher
             if (isset($first->name)) {
                 if ($first->name == "request") {
                     $first = $this->app->getRequest();
-                } else {
-                    $first = array_shift($this->args);
                 }
             }
 
+            // 如果第一个参数不是request,证明是普通参数
+            $args = $this->args;
+            if (!$first instanceof Request) {
+                $first = array_shift($args);
+            }
+
             if ($first) {
-                $args = $this->args;
                 if (0 == count($args)) {
                     $ref->invokeArgs($cont, [$first]);
                 } elseif (1 == count($args)) {
@@ -159,37 +162,11 @@ class Dispatcher
      */
     private function parseSegment(array $url)
     {
-        $this->method = $this->getMethod($url);
-        $this->controller = $this->getController($url);
         $this->args = isset($url['params']) ? $url['params'] : null;
-    }
-
-
-    /**
-     * 获取URL中的Action
-     *
-     * @param null $action
-     * @return null|string
-     */
-    public function getMethod(array $url)
-    {
-        return isset($url['action']) ? $url['action'] : 'index';
-    }
-
-
-    /**
-     * 获取Url中的Controller
-     *
-     * @param null $control
-     * @return null|string
-     */
-    public function getController(array $url)
-    {
-        if (!isset($url['controller'])) {
-            return get_class(AbstractController::getInstance());
-        }
-
-        return $url['controller'];
+        $this->method = isset($url['action']) ? $url['action'] : 'index';
+        $this->controller = isset($url['controller'])
+            ? $url['controller']
+            : get_class(AbstractController::getInstance());
     }
 
 
