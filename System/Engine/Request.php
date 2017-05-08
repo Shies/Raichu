@@ -106,7 +106,13 @@ class Request
     }
 
 
-    // GET Parameters
+    /**
+     * 获取GET参数
+     *
+     * @param string $name
+     * @param string $default
+     * @return string
+     */
     public function get($name = '', $default = '')
     {
         if ($name) {
@@ -116,7 +122,14 @@ class Request
         }
     }
 
-    // POST Parameters
+
+    /**
+     * 获取POST参数
+     *
+     * @param string $name
+     * @param string $default
+     * @return string
+     */
     public function getPost($name = '', $default = '')
     {
         if ($name) {
@@ -126,7 +139,14 @@ class Request
         }
     }
 
-    // Get Request
+
+    /**
+     * 获取REQUEST参数
+     *
+     * @param string $name
+     * @param string $default
+     * @return string
+     */
     public function getRequest($name = '', $default = '')
     {
         if ($name) {
@@ -136,12 +156,26 @@ class Request
         }
     }
 
-    // Cookie
+
+    /**
+     * 获取COOKIE参数
+     *
+     * @param string $name
+     * @return mixed
+     */
     public function getCookie($name = '')
     {
         return ($name) ? $_COOKIE[$name] : $_COOKIE;
     }
 
+
+    /**
+     * 获取FILES参数
+     *
+     * @param $name
+     * @param string $tp
+     * @return string
+     */
     public function getFile($name, $tp = '')
     {
         // tp should be `name`, `type`, `size`, `tmp_name`, `error`
@@ -156,9 +190,14 @@ class Request
         return strval(null);
     }
 
-    // Raw body
+
+    /**
+     * 获取输入流参数
+     * @return string
+     */
     public function getRawBody()
     {
         return file_get_contents('php://input');
     }
+
 }
