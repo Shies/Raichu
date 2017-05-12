@@ -24,9 +24,16 @@ class Controller
 
     /**
      * 默认单利对象
-     * @var aray
+     * @var array
      */
     protected $singleton = [];
+
+
+    /**
+     * 函数返回值
+     * @var bool
+     */
+    protected $return = true;
 
 
 
@@ -59,7 +66,7 @@ class Controller
             }
         }
 
-        return (true);
+        return $this->return;
     }
 
 

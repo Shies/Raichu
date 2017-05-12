@@ -88,8 +88,12 @@ class Dispatcher
      * 设置对象的参数
      * @param array $params
      */
-    public function getDI()
+    public function getApp()
     {
+        if (!$this->app instanceof Container) {
+            $this->app = App::getInstance();
+        }
+
         return $this->app;
     }
 
