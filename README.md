@@ -12,21 +12,21 @@ Document of Raichu
 │   │   ├── CSRFMiddleware.php\
 │   │   └── FilterMiddleware.php\
 │   └── Modules\
-│       ├── hello\
-│       │   ├── controller\
-│       │   │   └── Hello.php\
-│       │   ├── model\
-│       │   │   └── Hello.php\
-│       │   ├── provider\
-│       │   │   └── Hello.php\
+│       ├── Hello\
+│       │   ├── Controller\
+│       │   │   └── HelloController.php\
+│       │   ├── Model\
+│       │   │   └── HelloModel.php\
+│       │   ├── Provider\
+│       │   │   └── HelloProvider.php\
 │       │   └── route.php\
-│       └── world\
-│           ├── controller\
-│           │   └── World.php\
-│           ├── model\
-│           │   └── World.php\
-│           ├── provider\
-│           │   └── World.php\
+│       └── World\
+│           ├── Controller\
+│           │   └── WorldController.php\
+│           ├── Model\
+│           │   └── WorldModel.php\
+│           ├── Provider\
+│           │   └── WorldProvider.php\
 │           └── router.php\
 ├── Config\
 │   ├── config.php\

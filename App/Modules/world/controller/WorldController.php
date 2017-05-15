@@ -10,13 +10,16 @@ use Raichu\Engine\Loader;
 class WorldController extends AbstractController
 {
 
+    protected $load;
+
+
     public function __construct()
     {
         parent::initialize();
-        $l = new Loader('Hello');
-        $l->model("Hello");
-        $l->provider("Hello");
-        $l->controller("Hello");
+        $this->load = new Loader();
+        $this->load->model('Hello', "Hello");
+        $this->load->provider('Hello', "Hello");
+        $this->load->controller('Hello', "Hello");
     }
 
 
@@ -37,8 +40,8 @@ class WorldController extends AbstractController
         // $m = new HelloModel();
         // echo $m->shakehands();
 
-        $p = new HelloProvider();
-        echo $p->music();
+        // $p = new HelloProvider();
+        // echo $p->music();
 
         $c = new HelloController();
         echo $c->index($request);

@@ -7,7 +7,7 @@
  */
 return [
     // 开启全局公共模块
-    'modules'       => ['hello', 'world'],
+    'modules'       => ['Hello', 'World'],
 
     // 开启全局公共控制器
     'controllers'   => [],

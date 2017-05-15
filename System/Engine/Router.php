@@ -13,7 +13,7 @@ class Router
 {
 
     protected $app;
-    protected static $modules = 'hello';
+    protected static $modules = 'Hello';
     protected static $controller = 'Hello';
     protected static $method;
     protected static $params = [];
@@ -93,7 +93,7 @@ class Router
 
         reset($segments);
         if (current($segments)) {
-            if (is_dir(ROOT .'/app/modules/'.$segments[0])) {
+            if (is_dir(ROOT .'/App/Modules/'.$segments[0])) {
                 static::$modules = $segments[0];
                 unset($segments[0]);
                 if (isset($segments[1])) {
@@ -134,6 +134,7 @@ class Router
         $controller = $this->fetchController();
         $method = $this->fetchMethod();
         $params = $this->fetchParams();
+
 
         // 判断是否启动了modules
         if (
@@ -190,7 +191,7 @@ _return:
     {
         $uri = $this->app->make("request")->getUrlPath();
         if ($slash === $uri) {
-            return static::$modules;
+            return ucfirst(static::$modules);
         }
 
         $uri = explode($slash, trim($uri, $slash));
@@ -204,10 +205,10 @@ _return:
         }
 
         if (null === $item) {
-            return static::$modules;
+            return ucfirst(static::$modules);
         }
 
-        return (static::$modules = $item);
+        return (static::$modules = ucfirst($item));
     }
 
 

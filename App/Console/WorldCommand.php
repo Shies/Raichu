@@ -9,7 +9,7 @@ class WorldCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('world:hello')->setDescription('雷丘');
+        $this->setName('world:hello')->setDescription('raichu');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

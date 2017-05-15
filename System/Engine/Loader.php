@@ -1,5 +1,6 @@
 <?php
 namespace Raichu\Engine;
+use Raichu\Engine\Router;
 /**
  * 装载器,支持自动/手动.
  * User: gukai@bilibili.com
@@ -13,6 +14,7 @@ class Loader
      * @var array
      */
     protected static $loaded = [];
+    protected $module;
 
 
 
@@ -22,6 +24,10 @@ class Loader
      */
     public function __construct()
     {
+        $this->module = '*';
+        if ($module = (new Router())->fetchModules()) {
+            $this->module = $module;
+        }
         \spl_autoload_register([$this, 'autoload']);
     }
 
@@ -60,7 +66,6 @@ class Loader
 
         $result = [];
         static::traversing(APP_PATH.DS.$path, $result);
-        print_r($result);
         foreach ($result AS $val) {
             if (basename($val) == $fileName) {
                 include_once $val;
@@ -132,7 +137,7 @@ class Loader
      * @param $name
      * @return bool|void
      */
-    public function model($name)
+    public function model($name, $block = null)
     {
         if (is_array($name)) {
             foreach ($name AS $val) {
@@ -146,11 +151,18 @@ class Loader
             return;
         }
 
-        if (stripos($name, "model") === false) {
+        if (stripos($name, __FUNCTION__) === false) {
             $name = $name.ucfirst(__FUNCTION__);
         }
 
-        return static::import($name, 'Modules/*/model');
+        $path = "Modules/";
+        if ($block) {
+            $path .= $block.'/Model';
+        } else {
+            $path .= $this->module.'/Model';
+        }
+
+        return static::import($name, $path);
     }
 
 
@@ -160,7 +172,7 @@ class Loader
      * @param $name
      * @return bool|void
      */
-    public function provider($name)
+    public function provider($name, $block = null)
     {
         if (is_array($name)) {
             foreach ($name AS $val) {
@@ -174,11 +186,18 @@ class Loader
             return;
         }
 
-        if (stripos($name, "provider") === false) {
+        if (stripos($name, __FUNCTION__) === false) {
             $name = $name.ucfirst(__FUNCTION__);
         }
 
-        return static::import($name, 'Modules/*/provider');
+        $path = "Modules/";
+        if ($block) {
+            $path .= $block.'/Provider';
+        } else {
+            $path .= $this->module.'/Provider';
+        }
+
+        return static::import($name, $path);
     }
 
     /**
@@ -187,7 +206,7 @@ class Loader
      * @param $name
      * @return bool|void
      */
-    public function controller($name)
+    public function controller($name, $block = null)
     {
         if (is_array($name)) {
             foreach ($name AS $val) {
@@ -201,11 +220,18 @@ class Loader
             return;
         }
 
-        if (stripos($name, "controller") === false) {
+        if (stripos($name, __FUNCTION__) === false) {
             $name = $name.ucfirst(__FUNCTION__);
         }
 
-        return static::import($name, 'Modules/*/controller');
+        $path = "Modules/";
+        if ($block) {
+            $path .= $block.'/Controller';
+        } else {
+            $path .= $this->module.'/Controller';
+        }
+
+        return static::import($name, $path);
     }
 
 
@@ -229,7 +255,7 @@ class Loader
             return;
         }
 
-        if (stripos($name, "command") === false) {
+        if (stripos($name, __FUNCTION__) === false) {
             $name = $name.ucfirst(__FUNCTION__);
         }
 
@@ -257,7 +283,7 @@ class Loader
             return;
         }
 
-        if (stripos($name, "middleware") === false) {
+        if (stripos($name, __FUNCTION__) === false) {
             $name = $name.ucfirst(__FUNCTION__);
         }
 
