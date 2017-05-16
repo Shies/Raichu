@@ -1,4 +1,5 @@
 <?php
+namespace World\Model;
 use Raichu\Engine\AbstractModel;
 /**
  * 世界你好.

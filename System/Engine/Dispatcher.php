@@ -10,14 +10,48 @@ use Raichu\Engine\App;
 class Dispatcher
 {
 
+    /**
+     * 获取路由对象
+     * @var object
+     */
     protected $router;
+
+    /**
+     * 获取视图对象
+     * @var object
+     */
     protected $view;
+
+    /**
+     * 获取APP对象
+     * @var object
+     */
     protected $app;
+
+    /**
+     * 立刻的刷新
+     * @var boolean
+     */
     protected $instantly_flush;
 
+    /**
+     * 根据url获取指定的控制器
+     * @var string
+     */
     protected $controller;
+
+    /**
+     * 根据url获取指定的方法
+     * @var string
+     */
     protected $method;
+
+    /**
+     * 根据url获取指定的参数
+     * @var array
+     */
     protected $args = [];
+
 
 
     /**
@@ -71,6 +105,7 @@ class Dispatcher
         $this->router->parseUrl();
     }
 
+
     /**
      * 通过调度器执行Request/Middleware
      *
@@ -108,7 +143,6 @@ class Dispatcher
     {
         App::middleware($cls, $middleware, false);
     }
-
 
 
     /**

@@ -1,4 +1,5 @@
 <?php
+namespace Hello\Provider;
 /**
  * 测试库.
  * User: gukai@bilibili.com

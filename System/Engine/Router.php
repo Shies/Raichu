@@ -187,28 +187,26 @@ _return:
      * @param string $slash
      * @return mixed|null|string
      */
-    public function fetchModules($slash = DIRECTORY_SEPARATOR)
+    public function fetchModules()
     {
         $uri = $this->app->make("request")->getUrlPath();
-        if ($slash === $uri) {
+        if ("/" === $uri) {
             return ucfirst(static::$modules);
         }
 
-        $uri = explode($slash, trim($uri, $slash));
-        reset($uri);
-        $module = current($uri);
-
-        $item = null;
-        if (in_array(strtoupper($module), ['V4', 'API'])) {
-            next($uri);
-            $item = current($uri);
+        $uri = explode('/', trim($uri, '/'));
+        $module = array_shift($uri);
+        if (in_array(strtolower($module), ['v4', 'api'])) {
+            $module = $uri[0];
         }
 
-        if (null === $item) {
-            return ucfirst(static::$modules);
+        if (null == $module) {
+            $module = ucfirst(static::$modules);
+        } else {
+            $module = ucfirst($module);
         }
 
-        return (static::$modules = ucfirst($item));
+        return $module;
     }
 
 
@@ -218,7 +216,10 @@ _return:
      */
     public function fetchController()
     {
-        return ucfirst(static::$controller) . 'Controller';
+        $module = $this->fetchModules();
+        $controller = ucfirst(static::$controller) . 'Controller';
+
+        return $module.'\\Controller\\'.$controller;
     }
 
 
@@ -406,7 +407,9 @@ _return:
 
                 if (is_array($route['fn'])) {
                     $this->routeInfo = ['controller' => $route['fn'][0], 'method' => $route['fn'][1]];
-                    $route['fn'][0] = new $route['fn'][0]();
+
+                    $controller = $this->fetchModules().'\\Controller\\'.$route['fn'][0];
+                    $route['fn'][0] = new $controller();
                 } else {
                     $this->routeInfo['controller'] = 'Anonymous';
                     $this->routeInfo['method'] = is_string($route['fn']) ? $route['fn'] : 'Anonymous';

@@ -9,12 +9,12 @@ use Raichu\Engine\Router;
  */
 class Loader
 {
+
     /**
      * 返回已经加载的文件
      * @var array
      */
     protected static $loaded = [];
-    protected $module;
 
 
 
@@ -24,10 +24,6 @@ class Loader
      */
     public function __construct()
     {
-        $this->module = '*';
-        if ($module = (new Router())->fetchModules()) {
-            $this->module = $module;
-        }
         \spl_autoload_register([$this, 'autoload']);
     }
 
@@ -65,7 +61,7 @@ class Loader
         $fileName = ucfirst(trim($file, 'php')).$suffix;
 
         $result = [];
-        static::traversing(APP_PATH.DS.$path, $result);
+        static::traversing(APP_PATH.$path, $result);
         foreach ($result AS $val) {
             if (basename($val) == $fileName) {
                 include_once $val;
@@ -115,11 +111,11 @@ class Loader
         }
 
         if ('Model' === substr($class, -5)) {
-            $this->model($class);
+            $this->load($class);
         } elseif ('Provider' === substr($class, -8)) {
-            $this->provider($class);
+            $this->load($class);
         } elseif ('Controller' === substr($class, -10)) {
-            $this->controller($class);
+            $this->load($class);
         } elseif ('Command' === substr($class, -7)) {
             $this->command($class);
         } elseif ("Middleware" === substr($class, -10)) {
@@ -131,74 +127,6 @@ class Loader
         return static::$loaded;
     }
 
-    /**
-     * 递归载入模型文件函数
-     *
-     * @param $name
-     * @return bool|void
-     */
-    public function model($name, $block = null)
-    {
-        if (is_array($name)) {
-            foreach ($name AS $val) {
-                $this->model($val);
-            }
-            return;
-        }
-
-        if ($name == '' ||
-            isset(static::$loaded[$name])) {
-            return;
-        }
-
-        if (stripos($name, __FUNCTION__) === false) {
-            $name = $name.ucfirst(__FUNCTION__);
-        }
-
-        $path = "Modules/";
-        if ($block) {
-            $path .= $block.'/Model';
-        } else {
-            $path .= $this->module.'/Model';
-        }
-
-        return static::import($name, $path);
-    }
-
-
-    /**
-     * 递归载入库文件函数
-     *
-     * @param $name
-     * @return bool|void
-     */
-    public function provider($name, $block = null)
-    {
-        if (is_array($name)) {
-            foreach ($name AS $val) {
-                $this->provider($val);
-            }
-            return;
-        }
-
-        if ($name == '' ||
-            isset(static::$loaded[$name])) {
-            return;
-        }
-
-        if (stripos($name, __FUNCTION__) === false) {
-            $name = $name.ucfirst(__FUNCTION__);
-        }
-
-        $path = "Modules/";
-        if ($block) {
-            $path .= $block.'/Provider';
-        } else {
-            $path .= $this->module.'/Provider';
-        }
-
-        return static::import($name, $path);
-    }
 
     /**
      * 递归载入控制器文件函数
@@ -206,32 +134,28 @@ class Loader
      * @param $name
      * @return bool|void
      */
-    public function controller($name, $block = null)
+    public function load($classname)
     {
-        if (is_array($name)) {
-            foreach ($name AS $val) {
-                $this->controller($val);
-            }
-            return;
+        if (isset(static::$loaded[$classname])) {
+            return true;
         }
 
-        if ($name == '' ||
-            isset(static::$loaded[$name])) {
-            return;
+        $path = null;
+
+        // Load class in module
+        $classname = trim($classname, '\\');
+        $block = explode('\\', $classname);
+        if (!in_array($block[0], ['Controllers', 'Models', 'Services'])) {
+            $path .= '/Modules';
         }
 
-        if (stripos($name, __FUNCTION__) === false) {
-            $name = $name.ucfirst(__FUNCTION__);
-        }
-
-        $path = "Modules/";
+        $block = explode('\\', $classname);
+        $filename = array_pop($block);
         if ($block) {
-            $path .= $block.'/Controller';
-        } else {
-            $path .= $this->module.'/Controller';
+            $path .= '/'.implode('/', $block);
         }
 
-        return static::import($name, $path);
+        return static::import($filename, $path);
     }
 
 
@@ -259,7 +183,7 @@ class Loader
             $name = $name.ucfirst(__FUNCTION__);
         }
 
-        return static::import($name, 'Console');
+        return static::import($name, '/Console');
     }
 
 
@@ -287,7 +211,7 @@ class Loader
             $name = $name.ucfirst(__FUNCTION__);
         }
 
-        return static::import($name, 'Middleware');
+        return static::import($name, '/Middleware');
     }
 
 }

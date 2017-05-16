@@ -29,13 +29,6 @@ class Controller
     protected $singleton = [];
 
 
-    /**
-     * 函数返回值
-     * @var bool
-     */
-    protected $return = true;
-
-
 
     /**
      * 初始化构造函数
@@ -44,16 +37,6 @@ class Controller
     public function __construct()
     {
         $this->app = App::getInstance();
-        $this->initialize();
-    }
-
-
-    /**
-     * 绑定或者单利对象
-     * @return bool
-     */
-    public function initialize()
-    {
         if ($this->autobind) {
             foreach ($this->autobind AS $key => $val) {
                 $this->app->bind($key, $val);
@@ -66,7 +49,7 @@ class Controller
             }
         }
 
-        return $this->return;
+        return (1);
     }
 
 

@@ -1,4 +1,5 @@
 <?php
+namespace World\Provider;
 /**
  * Created by PhpStorm.
  * User: bilibili

@@ -1,6 +1,10 @@
 <?php
+namespace World\Controller;
 use Raichu\Engine\AbstractController;
-use Raichu\Engine\Loader;
+use Hello\Model\HelloModel;
+use Hello\Controller\HelloController;
+use Hello\Provider\HelloProvider;
+use World\Provider\WorldProvider;
 /**
  * 世界你好.
  * User: gukai@bilibili.com
@@ -10,16 +14,17 @@ use Raichu\Engine\Loader;
 class WorldController extends AbstractController
 {
 
-    protected $load;
+    protected $singleton = [
+        'world_provider' => WorldProvider::class,
+        'hello_model' => HelloModel::class,
+        'hello_provider' => HelloProvider::class,
+        'hello_control' => HelloController::class,
+    ];
 
 
     public function __construct()
     {
-        parent::initialize();
-        $this->load = new Loader();
-        $this->load->model('Hello', "Hello");
-        $this->load->provider('Hello', "Hello");
-        $this->load->controller('Hello', "Hello");
+        parent::__construct();
     }
 
 
@@ -37,20 +42,15 @@ class WorldController extends AbstractController
 
     public function hello($request)
     {
-        // $m = new HelloModel();
-        // echo $m->shakehands();
-
-        // $p = new HelloProvider();
-        // echo $p->music();
-
-        $c = new HelloController();
-        echo $c->index($request);
+        echo $this->make("hello_model")->shakehands();
+        echo $this->make("hello_provider")->music();
+        echo $this->make("hello_control")->index($request);
     }
 
 
     public function shakehands()
     {
-        echo (new WorldProvider())->lets();
+        echo $this->make("world_provider")->lets();
         exit;
     }
 
