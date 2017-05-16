@@ -145,11 +145,10 @@ class Loader
         // Load class in module
         $classname = trim($classname, '\\');
         $block = explode('\\', $classname);
-        if (!in_array($block[0], ['Controllers', 'Models', 'Services'])) {
+        if (!in_array($block[0], ['Controller', 'Model', 'Provider'])) {
             $path .= '/Modules';
         }
 
-        $block = explode('\\', $classname);
         $filename = array_pop($block);
         if ($block) {
             $path .= '/'.implode('/', $block);
