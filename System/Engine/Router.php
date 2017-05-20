@@ -176,6 +176,7 @@ class Router
             }
         }
 
+        return (0);
 _return:
         return (TRUE);
     }
@@ -195,9 +196,9 @@ _return:
         }
 
         $uri = explode('/', trim($uri, '/'));
-        $module = array_shift($uri);
-        if (in_array(strtolower($module), ['v4', 'api'])) {
-            $module = $uri[0];
+        $module = $uri[0];
+        if (in_array(strtoupper($module), ['V4', 'API'])) {
+            $module = $uri[1];
         }
 
         if (null == $module) {
@@ -327,12 +328,14 @@ _return:
             $notFound = $this->notFound;
             if (!$notFound) {
                 $this->app->make("response")->abort(404);
+                return;
             }
             if (is_array($notFound)) {
                 $notFound[0] = new $notFound[0]();
             }
             if (!is_callable($notFound)) {
                 $this->app->make("response")->abort(404);
+                return;
             }
             call_user_func($notFound);
         } else {

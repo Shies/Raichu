@@ -7,5 +7,5 @@
  */
 $router->get('/api/hello/logger', 'HelloController@logger');
 $router->get('/api/hello/shakehands', 'HelloController@shakehands');
-$router->get('/api/hello/index', 'HelloController@hello');
+$router->get('/api/hello/index', 'HelloController@index');
 $router->get('/api/hello/listen', 'HelloController@listen');
