@@ -25,23 +25,36 @@ class Request
     public static function getHeader($name = '')
     {
         if (static::$_headers == null) {
-            if (function_exists('getallheaders')) {
-                static::$_headers = getallheaders();
-            } else {
-                $headers = array();
-                foreach ($_SERVER as $name => $value) {
-                    if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
-                        $headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                    }
-                    static::$_headers = $headers;
-                }
-            }
+            static::getallheaders();
         }
+
         if ($name) {
             return isset(static::$_headers[$name]) ? static::$_headers[$name] : '';
-        } else {
-            return static::$_headers;
         }
+
+        return static::$_headers;
+    }
+
+
+    /**
+     * 获取所有headers的参数
+     * @return vold
+     */
+    protected static function getallheaders()
+    {
+        if (function_exists('getallheaders')) {
+            static::$_headers = getallheaders();
+            return;
+        }
+
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
+                $headers[str_replace([' ', 'Http'], ['-', 'HTTP'], ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+
+        static::$_headers = $headers;
     }
 
 
@@ -87,7 +100,7 @@ class Request
             $method = 'GET';
         } elseif ($method == 'POST') {
             $headers = static::getHeader();
-            if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], array('PUT', 'DELETE', 'PATCH'))) {
+            if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], ['PUT', 'DELETE', 'PATCH'])) {
                 $method = $headers['X-HTTP-Method-Override'];
             }
         }
