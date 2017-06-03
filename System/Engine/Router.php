@@ -12,11 +12,40 @@ use Raichu\Middleware\Clockwork\Monitor;
 class Router
 {
 
+    /**
+     * 初始化APP对象
+     * @var object
+     */
     protected $app;
+
+    /**
+     * 获取分发指定模块
+     * @var string
+     */
     protected static $modules = 'Hello';
+
+    /**
+     * 后去分发指定控制器
+     * @var string
+     */
     protected static $controller = 'Hello';
+
+    /**
+     * 获取分发指定方法
+     * @var string
+     */
     protected static $method;
+
+    /**
+     * 获取分发指定的参数
+     * @var array
+     */
     protected static $params = [];
+
+    /**
+     * 获取默认处理方法
+     * @var string
+     */
     protected static $autoAction = 'index';
 
     /**
@@ -71,7 +100,8 @@ class Router
 
 
     /**
-     * 解析当前router地址 非restful
+     * 解析当前router地址, 默认访问模式
+     * @return void
      */
     public function parseUrl()
     {
@@ -134,7 +164,6 @@ class Router
         $controller = $this->fetchController();
         $method = $this->fetchMethod();
         $params = $this->fetchParams();
-
 
         // 判断是否启动了modules
         if (
@@ -269,6 +298,14 @@ _return:
         $this->notFound = $fn;
     }
 
+
+    /**
+     * 匹配路由和制定路由参数
+     *
+     * @param $methods
+     * @param $pattern
+     * @param $argvs
+     */
     public function match($methods, $pattern, $argvs)
     {
         $pattern = '/'.trim($pattern, '/');
@@ -296,11 +333,21 @@ _return:
         }
     }
 
+
+    /**
+     * 获取router的名称
+     * @return string
+     */
     public function getRouteName()
     {
         return $this->routeName;
     }
 
+
+    /**
+     * 获取router的详情
+     * @return array
+     */
     public function getInfo()
     {
         return $this->routeInfo;

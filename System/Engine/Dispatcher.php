@@ -146,9 +146,9 @@ class Dispatcher
 
 
     /**
-     * controller => Hello,
+     * controller => Hello::class,
      * action => index,
-     * params => [1, 2, 3]
+     * params => [one, two, three]
      * 控制器之间互相回调
      *
      * @return array
