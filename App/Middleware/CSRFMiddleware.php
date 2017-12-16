@@ -12,10 +12,10 @@ class CSRFMiddleware implements Middleware
 {
 
     // use strict
+    protected $token;
+    protected $request;
+    protected $lifeTime;
     protected static $_instance;
-    protected static $expireTime;
-    protected static $createTime;
-    protected $req;
 
 
     public static function getInstance(App $app)
@@ -28,82 +28,87 @@ class CSRFMiddleware implements Middleware
     }
 
 
-    public function __construct(App $app)
+    private function __construct(App $app)
     {
-        $this->req =& $app->getRequest();
-        $this->createTime = time();
-    }
-
-
-    public function handle()
-    {
-        return $this->verify() && $this->compare();
-    }
-
-
-    public function compare()
-    {
-        $server = $this->req->getHeader('XSRF-TOEKN');
-        $get = $this->req->get('XSRF-TOKEN');
-        $post = $this->req->getPost('XSRF-TOKEN');
-
-        if (!Session::_has('XSRF-TOKEN')) {
-            Session::_set('XSRF-TOKEN', NULL);
-        }
-
-        return in_array(Session::_get('XSRF-TOKEN'), [$post, $get, $server]);
+        $this->lifeTime = 1800;
+        $this->token = "XSRF-TOKEN";
+        $this->request = $app->getRequest();
     }
 
 
     public function verify()
     {
-        if (
-            $this->isExpired() &&
-            $this->isReading()
-        ) {
-            return $this->saveSession()->saveCookie();
+        if (!$this->isExpired() && !isset($_COOKIE[$this->token])) {
+            $this->setCookie(Session::get($this->token));
+        }
+
+        $token = $this->generateToken();
+        if ($this->isExpired()) {
+            return $this->setSession($token)->setCookie($token);
+        }
+
+        if ($this->isReading() && $this->compare()) {
+            return $this->setSession($token)->setCookie($token);
         }
 
         return false;
     }
 
 
-    public function generate_token()
+    protected function compare()
     {
-        return uniqid(md5(rand()), true);
+        $token = $this->request->get($this->token) ?: $this->request->getPost($this->token);
+        if (!$token && $this->request->getHeader($this->token)) {
+            $token = $this->request->getHeader($this->token);
+        }
+
+        if (!is_string($token)) {
+            return false;
+        }
+
+        return hash_equals(Session::get($this->token), $token);
     }
 
 
-    public function saveCookie()
+    protected function generateToken()
     {
-        setcookie('XSRF-TOKEN', $this->generate_token(), time() + 1200, '/', '.bilibili.com', true, true);
+        return md5(uniqid(rand(), true));
+    }
+
+
+    protected function setCookie($token)
+    {
+        unset($_COOKIE[$this->token]);
+        setcookie($this->token, $token, time() + $this->lifeTime, '/', '', false, true);
 
         return $this;
     }
 
 
-    public function saveSession()
+    protected function setSession($token)
     {
-        ini_set('session.gc_maxlifetime', 1200);
-        ini_set('session.cookie_lifetime', 1200);
+        ini_set('session.gc_maxlifetime', $this->lifeTime);
+        ini_set('session.cookie_lifetime', $this->lifeTime);
         ini_set("session.cookie_httponly", 1);
-        Session::_set('XSRF-TOKEN', $this->generate_token());
+
+        unset($_SESSION[$this->token]);
+        Session::set($this->token, $token);
 
         return $this;
     }
 
 
-    public function isExpired()
+    protected function isExpired()
     {
-        return ($this->expireTime != -1 && time() - $this->createTime > $this->expireTime);
+        return !Session::has($this->token) ? true : false;
     }
 
 
-    public function isReading()
+    protected function isReading()
     {
         $method = null;
-        if (array_key_exists($this->req->getMethod(), ['POST', 'GET', 'HEAD', 'OPTIONS'])) {
-            $method = $this->req->getMethod();
+        if (in_array($this->request->getMethod(), ['POST', 'GET', 'HEAD', 'OPTIONS'])) {
+            $method = $this->request->getMethod();
         }
 
         return $method ?: false;

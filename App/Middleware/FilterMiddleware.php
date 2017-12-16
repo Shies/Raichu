@@ -28,8 +28,8 @@ class FilterMiddleware implements Middleware
         $this->isLogin();
         // throw new Exception("登录状态失效!", Ecode::Unauthorized);
 
-        if (!UserLogged::isAdmin()) {
-            throw new Exception('没有操作权限！', Ecode::Forbidden);
+        if (!$this->isAdmin()) {
+            throw new Exception('没有操作权限！', 403);
         }
     }
 
@@ -39,5 +39,10 @@ class FilterMiddleware implements Middleware
             echo "<script>parent.location.href='/login';</script>";
             exit;
         }
+    }
+
+    public function isAdmin()
+    {
+        return true;
     }
 }
