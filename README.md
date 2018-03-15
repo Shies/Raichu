@@ -9,7 +9,7 @@ Document of Raichu
 
 
 ### 服务搭建
-```json
+```
 server {
     listen       80;
     server_name  l.raichu.com;
