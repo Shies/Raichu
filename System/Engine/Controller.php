@@ -38,18 +38,16 @@ class Controller
     {
         $this->app = App::getInstance();
         if ($this->autobind) {
-            foreach ($this->autobind AS $key => $val) {
-                $this->app->bind($key, $val);
+            foreach ($this->autobind AS $name => $class) {
+                $this->app->bind($name, $class);
             }
         }
 
         if ($this->singleton) {
-            foreach ($this->singleton AS $key => $val) {
-                $this->app->singleton($key, $val);
+            foreach ($this->singleton AS $name => $class) {
+                $this->app->singleton($name, $class);
             }
         }
-
-        return (1);
     }
 
 
@@ -72,9 +70,8 @@ class Controller
      */
     public function getView()
     {
-        return $this->app->make("view");
+        return $this->make("view");
     }
-
 
 
     /**
@@ -83,7 +80,7 @@ class Controller
      */
     public function getResponse()
     {
-        return $this->app->make("response");
+        return $this->make("response");
     }
 
 }

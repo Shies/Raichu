@@ -100,21 +100,23 @@ class Dispatcher
      * 调度器解析RouterURL
      * @return void
      */
-    public function parseRouterUrl()
+    public function parseRouterUrl(Request $request)
     {
-        $this->router->parseUrl();
+        $this->router->parseUrl($request);
     }
 
 
     /**
-     * 通过调度器执行Request/Middleware
+     * 通过调度器执行Request/Callback
      *
      * @param callable $request
      * @return bool
      */
-    public function dispatch($request)
+    public function dispatch(Request $request, $uri = null)
     {
-        $this->router->run($request);
+        $req = $uri ? $request->setUri($uri) : $request;
+        $this->parseRouterUrl($req);
+        $this->router->run($req);
         return true;
     }
 
@@ -125,11 +127,25 @@ class Dispatcher
      */
     public function getApp()
     {
-        if (!$this->app instanceof Container) {
-            $this->app = App::getInstance();
-        }
-
         return $this->app;
+    }
+
+
+    /**
+     * 301/302重定向
+     * @param string $url
+     */
+    public function redirect($uri, $method = 'location', $http_response_code = 302)
+    {
+        switch ($method) {
+            case 'refresh':
+                header("Refresh:0;url=".$uri);
+                break;
+            default:
+                header("Location: ".$uri, true, $http_response_code);
+                break;
+        }
+        exit;
     }
 
 
@@ -139,9 +155,18 @@ class Dispatcher
      * @param $cls
      * @param $middleware
      */
-    public function middleware($cls, $middleware)
+    public function getMiddleware($name)
     {
-        App::middleware($cls, $middleware, false);
+        if (!is_string($name)) {
+            return false;
+        }
+
+        $instance = null;
+        if (method_exists($name, "getInstance")) {
+            $instance = $name::getInstance($this->app);
+        }
+
+        return $instance;
     }
 
 

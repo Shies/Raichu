@@ -14,6 +14,8 @@ class Request
      * @var array
      */
     protected static $_headers;
+    protected static $_httpuri;
+
 
 
     /**
@@ -59,6 +61,20 @@ class Request
 
 
     /**
+     * 调度器设置指定http uri为当前uri
+     * @param null $uri
+     */
+    public function setUri($uri)
+    {
+        if (null === static::$_httpuri) {
+            static::$_httpuri = $uri ? $uri : $this->getUrl();
+        }
+
+        return $this;
+    }
+
+
+    /**
      * 获取当前访问的URL
      * @return mixed
      */
@@ -74,6 +90,10 @@ class Request
      */
     public function getUrlPath()
     {
+        if (static::$_httpuri) {
+            return static::$_httpuri;
+        }
+
         $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)).'/';
         $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
 

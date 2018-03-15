@@ -1,4 +1,7 @@
 <?php
+define('ROOT', __DIR__ . '/../../../');
+require ROOT .'/vendor/autoload.php';
+
 use Raichu\Provider\Async\Task;
 use Raichu\Provider\Async\Schedule;
 use Raichu\Provider\Async\SysCall;
@@ -15,6 +18,7 @@ $i = 5;
 
 $s = new Schedule();
 $s->start(task1());
+$s->start(task2());
 // $s->start(task2());
 die('must return' . PHP_EOL);
 

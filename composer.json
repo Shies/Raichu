@@ -9,7 +9,8 @@
         "itsgoingd/clockwork": "~1.9",
         "j4mie/idiorm": "^1.5",
         "PHPMailer/PHPMailer": "^5.2",
-        "symfony/console": "^2.7"
+        "symfony/console": "^2.7",
+        "gukai/php7-forp": "dev-master"
     },
     "autoload": {
         "classmap": [

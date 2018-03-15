@@ -2,6 +2,7 @@
 namespace Raichu\Engine;
 use Raichu\Engine\App;
 use Raichu\Middleware\Clockwork\Monitor;
+use yii\base\Exception;
 
 /**
  * 自动识别和手动配置路由.
@@ -63,16 +64,6 @@ class Router
      */
     protected $notFound;
 
-    /**
-     * @var string The current route name
-     */
-    protected $routeName = '';
-
-    /**
-     * @var array The result of current route
-     */
-    protected $routeInfo = [];
-
 
     /**
      * 反射访问指定的函数
@@ -103,7 +94,7 @@ class Router
      * 解析当前router地址, 默认访问模式
      * @return void
      */
-    public function parseUrl()
+    public function parseUrl(Request $request)
     {
         if (!headers_sent()) {
             header("Access-Control-Allow-Origin", "*");
@@ -111,7 +102,7 @@ class Router
         }
 
         $segments = [];
-        $uri = $this->app->make("request")->getUrlPath();
+        $uri = $request->getUrlPath();
         if ($uri && $uri != '/') {
             $uri = parse_url($uri, PHP_URL_PATH);
             $uri = str_replace(['//', '../'], '/', trim($uri, '/'));
@@ -154,14 +145,14 @@ class Router
      * @param null $request
      * @return bool
      */
-    public function autoHandle($request = null)
+    public function autoHandle(Request $request)
     {
         if (!isset($this->app->config['modules'])) {
             return false;
         }
 
-        $modules = $this->fetchModules();
-        $controller = $this->fetchController();
+        $modules = $this->fetchModules($request->getUrlPath());
+        $controller = $this->fetchController($request->getUrlPath());
         $method = $this->fetchMethod();
         $params = $this->fetchParams();
 
@@ -181,33 +172,31 @@ class Router
             $ref = new \ReflectionMethod($controller, $method);
             if ($ref->isPublic() && $ref->isStatic()) {
                 if (is_callable([new $controller, 'beforeExecuteRoute'])) {
-                    $controller::beforeExecuteRoute(null);
+                    $controller::beforeExecuteRoute($this->app->dispatcher());
                 }
                 $controller::$method($params);
                 if (is_callable([new $controller, 'afterExecuteRoute'])) {
-                    $controller::afterExecuteRoute(null);
+                    $controller::afterExecuteRoute($this->app->dispatcher());
                 }
-                goto _return;
+                return true;
             }
 
             if ($ref->isPublic() && !$ref->isStatic()) {
                 $ctl = new $controller();
                 if (is_callable([$ctl, $method])) {
                     if (is_callable([$ctl, 'beforeExecuteRoute'])) {
-                        $ctl->beforeExecuteRoute(null);
+                        $ctl->beforeExecuteRoute($this->app->dispatcher());
                     }
                     call_user_func_array([$ctl, $method], $params);
                     if (is_callable([$ctl, 'afterExecuteRoute'])) {
-                        $ctl->afterExecuteRoute(null);
+                        $ctl->afterExecuteRoute($this->app->dispatcher());
                     }
-                    goto _return;
+                    return true;
                 }
             }
         }
 
         return (0);
-_return:
-        return (TRUE);
     }
 
 
@@ -217,9 +206,8 @@ _return:
      * @param string $slash
      * @return mixed|null|string
      */
-    public function fetchModules()
+    public function fetchModules($uri)
     {
-        $uri = $this->app->make("request")->getUrlPath();
         if ("/" === $uri) {
             return ucfirst(static::$modules);
         }
@@ -244,9 +232,9 @@ _return:
      * 获取当前请求控制器
      * @return string
      */
-    public function fetchController()
+    public function fetchController($uri)
     {
-        $module = $this->fetchModules();
+        $module = $this->fetchModules($uri);
         $controller = ucfirst(static::$controller) . 'Controller';
 
         return $module.'\\Controller\\'.$controller;
@@ -275,7 +263,7 @@ _return:
     {
         if (
             isset($this->app->config['is_enable_response']) &&
-            false !== $this->app->config['is_enable_response']
+            $this->app->config['is_enable_response']
         ) {
             array_unshift(static::$params, $this->app->make("response"));
         }
@@ -306,67 +294,36 @@ _return:
      * @param $pattern
      * @param $argvs
      */
-    public function match($methods, $pattern, $argvs)
+    public function match($methods, $pattern, $fn)
     {
         $pattern = '/'.trim($pattern, '/');
-        $fn = $argvs;
-        $name = $middleware = $final = null;
-        if (is_array($argvs) && isset($argvs['uses'])) {
-            $fn = $argvs['uses'];
-            $name = isset($argvs['as']) ? $argvs['as'] : '';
-            $middleware = isset($argvs['middleware']) ? $argvs['middleware'] : '';
-            $final = (isset($argvs['final']) && is_bool($argvs['final'])) ? $argvs['final'] : true;
-        }
         if (is_string($fn) && strstr($fn, '@')) {
             $fn = explode('@', $fn);
         }
 
         foreach (explode('|', $methods) as $method) {
             $method = strtoupper($method);
-            static::$routes[$method][] = [
-                'as' => $name,
-                'pattern' => $pattern,
-                'middleware' => $middleware,
-                'fn' => $fn,
-                'final' => $final,
-            ];
+            static::$routes[$method][] = ['pattern' => $pattern, 'fn' => $fn];
         }
+
+        return true;
     }
 
-
-    /**
-     * 获取router的名称
-     * @return string
-     */
-    public function getRouteName()
-    {
-        return $this->routeName;
-    }
-
-
-    /**
-     * 获取router的详情
-     * @return array
-     */
-    public function getInfo()
-    {
-        return $this->routeInfo;
-    }
 
     /**
      * Execute the router: Loop all defined before middlewares and routes, and execute the handling function if a match was found.
      *
      * @param object|callable $callback Function to be executed after a matching route was handled (= after router middleware)
      */
-    public function run($callback = null)
+    public function run(Request $request)
     {
-        $method = $this->app->make("request")->getMethod();
+        $method = $request->getMethod();
 
         $handled = false;
         if (isset(static::$routes[$method])) {
-            $handled = $this->handle(static::$routes[$method]);
+            $handled = $this->handle(static::$routes[$method], $request);
             if (!$handled) {
-                $handled = $this->autoHandle($this->app->make("request"));
+                $handled = $this->autoHandle($request);
             }
         }
 
@@ -375,25 +332,14 @@ _return:
             $notFound = $this->notFound;
             if (!$notFound) {
                 $this->app->make("response")->abort(404);
-                return;
             }
             if (is_array($notFound)) {
                 $notFound[0] = new $notFound[0]();
             }
             if (!is_callable($notFound)) {
                 $this->app->make("response")->abort(404);
-                return;
             }
             call_user_func($notFound);
-        } else {
-            // After router middleware
-            if (is_string($callback) && strstr($callback, '@')) {
-                $callback = explode('@', $callback);
-                $callback[0] = new $callback[0]();
-                call_user_func($callback);
-            } elseif ($callback) {
-                $callback();
-            }
         }
 
         // If it originally was a HEAD request, clean up after ourselves by emptying the output buffer
@@ -402,7 +348,7 @@ _return:
         }
 
         if ($this->app->debug) {
-            Monitor::getInstance()->endEvent('App Request');
+            Monitor::getInstance()->endEvent('run Request');
         }
     }
 
@@ -413,10 +359,10 @@ _return:
      *
      * @return int The number of routes handled
      */
-    protected function handle($routes)
+    protected function handle($routes, Request $request)
     {
         // The current page URL
-        $currentUri = $this->app->make("request")->getUrlPath();
+        $currentUri = $request->getUrlPath();
 
         // Loop all routes
         foreach ($routes as $route) {
@@ -440,35 +386,22 @@ _return:
 
                     }, $matches, array_keys($matches)
                 );
-                $params = array_merge([$this->app->make("request")], $params);
-
-                // call the handling function with the URL parameters
-                if ($route['as']) {
-                    $this->routeName = $route['as'];
-                }
-                if ($route['middleware']) {
-                    $before = $route['middleware'];
-                    if (is_string($before) && strstr($before, '@')) {
-                        $before = explode('@', $before);
-                        $before[0] = $before[0]::getInstance();
-                    }
-                    call_user_func_array($before, $params);
-                }
+                $params = array_merge([$request], $params);
 
                 if (is_array($route['fn'])) {
-                    $this->routeInfo = ['controller' => $route['fn'][0], 'method' => $route['fn'][1]];
-
-                    $controller = $this->fetchModules().'\\Controller\\'.$route['fn'][0];
+                    $controller = $this->fetchModules($currentUri).'\\Controller\\'.$route['fn'][0];
                     $route['fn'][0] = new $controller();
-                } else {
-                    $this->routeInfo['controller'] = 'Anonymous';
-                    $this->routeInfo['method'] = is_string($route['fn']) ? $route['fn'] : 'Anonymous';
                 }
-                call_user_func_array($route['fn'], $params);
 
-                // check if quit after deal with the route
-                if (isset($route['final']) && $route['final'] === false) {
-                    continue;
+                if (isset($route['fn'][0])) {
+                    if (method_exists($route['fn'][0], 'beforeExecuteRoute')) {
+                        $route['fn'][0]->beforeExecuteRoute($this->app->dispatcher());
+                    }
+
+                    call_user_func_array($route['fn'], $params);
+                    if (method_exists($route['fn'][0], 'afterExecuteRoute')) {
+                        $route['fn'][0]->afterExecuteRoute($this->app->dispatcher());
+                    }
                 }
 
                 return true;

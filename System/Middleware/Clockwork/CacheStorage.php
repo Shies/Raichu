@@ -37,7 +37,7 @@ class CacheStorage extends Storage
             return new Request(json_decode($data, true));
         }
 
-        return;
+        return false;
     }
 
     public function store(Request $request)

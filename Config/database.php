@@ -7,9 +7,9 @@
  */
 return [
     'default' => [
-        'connection_string' => 'mysql:host=127.0.0.1;dbname=mysql',
-        'username' => 'root',
-        'password' => '',
+        'connection_string' => 'mysql:host=172.16.33.205;port=3308;dbname=bilibili_manager',
+        'username' => 'test',
+        'password' => 'test',
         'driver_options' => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => false,

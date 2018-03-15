@@ -22,6 +22,11 @@ abstract class AbstractModel extends Model
     protected $_database = 'default';
 
     /**
+     * 备份当前操作数据表
+     */
+    protected $_backup;
+
+    /**
      * 表前缀, 可统一管理
      * @var string
      */
@@ -34,13 +39,14 @@ abstract class AbstractModel extends Model
     public static $_primary = 'id';
 
 
+
     /**
      * 初始化方法
      * @return void
      */
     public function initialize()
     {
-        static::$_tbprefix = null;
+        $this->_backup = static::$_tbprefix . $this->_table;
         parent::__construct($this->getSource(), $this->getDBName());
     }
 
@@ -112,9 +118,11 @@ abstract class AbstractModel extends Model
     public function update($id, array $data)
     {
         $item = $this->find($id, false);
-        $item->set($data)->save();
+        foreach ($data AS $key => $val) {
+            $item->$key = $val;
+        }
 
-        return intval(true);
+        return $item->save();
     }
 
 
@@ -126,10 +134,12 @@ abstract class AbstractModel extends Model
      */
     public function delete($id)
     {
-        $item = $this->find($id, false);
-        $item->delete();
+        $item = $this->clean()->where(static::$_primary, $id)->find_one();
+        if (!$item) {
+            return false;
+        }
 
-        return intval(true);
+        return $item->delete();
     }
 
 
@@ -169,19 +179,20 @@ abstract class AbstractModel extends Model
             $this->_table = $table;
         }
 
-        $res = [];
+        $res = null;
         if (is_null($id)) {
-            $res = (array) $this->get($where, null);
+            $res = $this->get($where, null);
         } else {
-            $res = (array) $this->find($id);
+            $res = $this->find($id);
         }
 
+        $this->_table = $this->_backup;
         return $res;
     }
 
 
-    /**
-     * load setBuilder set write operation
+    /* *
+     * load curdbuilder set write operation
      *
      * @param mixed INSERT, DELETE, UPDATE
      */
@@ -198,8 +209,8 @@ abstract class AbstractModel extends Model
         // Request a transaction
         $transaction = App::getDB($this->getDBName());
         $transaction->beginTransaction();
-        $res = null;
         try {
+            $res = null;
             if ($mode == 'INSERT') {
                 $res = $this->add($data);
             } elseif ($mode == 'DELETE') {
@@ -209,13 +220,14 @@ abstract class AbstractModel extends Model
             } else {
                 $transaction->rollBack();
             }
+            $this->_table = $this->_backup;
             $transaction->commit();
         } catch(\Exception $e) {
             $transaction->rollBack();
             throw new \Exception("database fail！(" . $e->getMessage() . ")");
         }
 
-        return (int) $res;
+        return $res;
     }
 
 }

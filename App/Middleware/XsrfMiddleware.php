@@ -8,7 +8,7 @@ use Raichu\Engine\Middleware;
  * Date: 17/2/23
  * Time: 上午11:07
  */
-class CSRFMiddleware implements Middleware
+class XsrfMiddleware implements Middleware
 {
 
     // use strict

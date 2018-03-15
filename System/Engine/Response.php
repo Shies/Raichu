@@ -48,7 +48,7 @@ class Response
      */
     public function setHeader($code)
     {
-        $message = self::$httpStatuses[$code];
+        $message = AbstractController::getResponseDescription($code);
         header("{$_SERVER['SERVER_PROTOCOL']} {$code} {$message}");
     }
 

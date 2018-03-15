@@ -26,7 +26,7 @@ $options = include ROOT . '/Config/database.php';
 $app->setDB($options);
 
 // Init Dispacher
-$app->dispatcher()->parseRouterUrl();
+$app->dispatcher()->parseRouterUrl($app->getRequest());
 
 // Init Router
 $router = $app->getRouter();
@@ -41,7 +41,7 @@ try {
         require_once $val;
     }
 
-    $router->run();
+    $router->run($app->getRequest());
 } catch (Exception $e) {
     $data['code'] = $e->getCode();
     $data['msg'] = $e->getMessage();

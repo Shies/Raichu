@@ -26,9 +26,10 @@ class FilterMiddleware implements Middleware
     public function checkAdmin()
     {
         $this->isLogin();
-        // throw new Exception("登录状态失效!", Ecode::Unauthorized);
+        // throw new Exception("登录状态失效!", 403);
 
         if (!$this->isAdmin()) {
+            // forbidden
             throw new Exception('没有操作权限！', 403);
         }
     }
