@@ -1,5 +1,6 @@
 <?php
 namespace Raichu\Provider;
+use Raichu\Middleware\Clockwork\Monitor;
 /**
  * Http请求类.
  * 封装了常用的CURL操作
@@ -66,19 +67,20 @@ class Http
      */
     protected function getHandler($opts = [])
     {
-        $ch = curl_init();
+        $handler = curl_init();
 
         $opts = array_merge($this->opts, $opts);
-        curl_setopt_array($ch, [
+        curl_setopt_array($handler, [
             CURLOPT_DNS_USE_GLOBAL_CACHE => $opts['dns_use_global_cache'],
             CURLOPT_DNS_CACHE_TIMEOUT => $opts['dns_cache_timeout'],
             CURLOPT_RETURNTRANSFER => $opts['returntransfer'],
             CURLOPT_FAILONERROR => $opts['failonerror'],
             CURLOPT_MAXREDIRS => $opts['maxredirs'],
             CURLOPT_CONNECTTIMEOUT => $opts['connecttimeout'],
-            CURLOPT_TIMEOUT => $opts['timeout']]);
+            CURLOPT_TIMEOUT => $opts['timeout']
+        ]);
 
-        return ($ch ?: false);
+        return $handler;
     }
 
     /**
@@ -187,6 +189,32 @@ class Http
         return $this->run($ch);
     }
 
+
+    /**
+     * @param string $api
+     * @param string $query
+     * @param array $opts
+     * @return mixed
+     */
+    public function JsonPost($api = '', $query = '', $opts = [])
+    {
+        $ch = $this->getHandler($opts);
+        $query = is_array($query) ? http_build_query($query) : $query;
+
+        $this->query = $query;
+        $this->url = $this->api_path . $api;
+
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+        $this->setHeader('Content-Type: application/json');
+        $this->setHeader('Content-Length: ' . strlen($query));
+        if ($this->headers) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        }
+
+        return $this->run($ch);
+    }
+
     /**
      * 发出PUT请求
      *
@@ -236,11 +264,17 @@ class Http
         if ($this->withHeader) {
             curl_setopt($ch, CURLOPT_HEADER, 1);
         }
+
         $response = curl_exec($ch);
         if ($response === false) {
             $this->error = ['errno' => curl_errno($ch), 'error' => curl_error($ch)];
+            Logger::getInstance()->error($this->error);
         } else {
             $this->info = curl_getinfo($ch);
+            if ($GLOBALS["app"]->debug) {
+                $middleware = Monitor::getInstance();
+                $middleware->httpRequest($this->info['url'], $this->info['total_time'], $this->query ? $this->query : '');
+            }
         }
         curl_close($ch);
 

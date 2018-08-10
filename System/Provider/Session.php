@@ -1,5 +1,7 @@
 <?php
 namespace Raichu\Provider;
+use Raichu\Engine\App;
+
 /**
  * 会话控制sess基.
  * User: gukai@bilibili.com
@@ -12,20 +14,24 @@ class Session
 
     public function __construct()
     {
-        if (!session_id()) {
-            session_start();
-        }
+        ;
     }
 
 
-    public function _config()
+    public function _init()
     {
-        // ini_set('session.save_handler', 'memcached');
-        // ini_set('session.save_path', '172.18.21.249:36379');
+        $config = App::getInstance()->loadConfig('config')["redis"];
+        ini_set('session.save_handler', 'redis');
+        ini_set('session.save_path', 'tcp://'.$config["host"].':'.$config["port"].'?auth='.$config["auth"]);
         ini_set('session.gc_maxlifetime', 86400);
         ini_set('session.cookie_lifetime', 86400);
         ini_set("session.cookie_httponly", 1);
-        ini_set('session.name', 'mng-bilibili');
+        // ini_set('session.cookie_path', '/');
+        // ini_set('session.cookie_domain', '.bilibili.com');
+        ini_set('session.name', 'bili');
+        if (!session_id()) {
+            session_start();
+        }
     }
 
 

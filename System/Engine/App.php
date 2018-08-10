@@ -1,7 +1,9 @@
 <?php
 namespace Raichu\Engine;
+
 use Raichu\Middleware\Clockwork\Monitor;
 use Raichu\Middleware\Clockwork\CacheStorage;
+use Raichu\Provider\Ecode;
 
 /**
  * 应用业务逻辑抽象实例
@@ -18,20 +20,33 @@ class App extends Container
      */
     protected static $instance;
 
+
     /**
      * 初始化APP构造函数
      * App constructor.
      */
     public function __construct()
     {
-        $this->singleton("request", Request::class);
-        $this->singleton("response", Response::class);
-        $this->singleton("view", View::class);
-        $this->singleton("router", Router::class);
-        $this->bind("dispatcher", Dispatcher::class);
-        $this->bind("loader", Loader::class);
-        $this->bind("model", Model::class);
+        set_error_handler([$this, 'handleError']);
+        set_exception_handler([$this, 'handleException']);
+        $this->loadEngine();
     }
+
+
+    /**
+     * 载入引擎核心类
+     */
+    private function loadEngine()
+    {
+        $this->singleton('request', Request::class);
+        $this->singleton('response', Response::class);
+        $this->singleton('router', Router::class);
+        $this->singleton('view', View::class);
+        $this->bind('dispatcher', Dispatcher::class);
+        $this->bind('loader', Loader::class);
+        $this->bind('model', Model::class);
+    }
+
 
     /**
      * 初始化当前APP实例
@@ -46,6 +61,7 @@ class App extends Container
         return static::$instance;
     }
 
+
     /**
      * 开启ClockWork Debug模式
      * return void
@@ -54,10 +70,10 @@ class App extends Container
     {
         $this->debug = true;
 
-        $storage = new CacheStorage("172.16.0.148", 11211);
+        $storage = new CacheStorage("127.0.0.1", 11211);
         $clockwork = Monitor::getClockwork($storage);
         $this->getRouter()->get(
-            '/__clockwork/(.*)', function ($request, $id) use ($clockwork) {
+                '/__clockwork/(.*)', function ($request, $id) use ($clockwork) {
                 header('Content-Type: application/json');
                 echo $clockwork->getStorage()->retrieveAsJson($id);
                 exit;
@@ -65,6 +81,7 @@ class App extends Container
         );
         Monitor::getInstance()->startEvent('App Request', 'Total Time Costs.');
     }
+
 
     /**
      * 初始化ORM数据库实例
@@ -77,69 +94,73 @@ class App extends Container
                 $option['logging'] = true;
                 \ORM::configure(
                     'logger', function ($query, $time) {
-                        Model::logging($query, $time);
-                    }, $name
+                    Model::logging($query, $time);
+                }, $name
                 );
             }
             \ORM::configure($option, null, $name);
         }
     }
 
-    /**
-     * 初始化请求实例
-     * @return mixed
-     */
-    public function getRequest()
-    {
-        return $this->make("request");
-    }
 
     /**
-     * 初始化响应实例
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->make("response");
-    }
-
-    /**
-     * 初始化视图实例
-     * @return mixed
-     */
-    public function getView()
-    {
-        return $this->make("view");
-    }
-
-    /**
-     * 初始化当前路由实例
-     * @return mixed
-     */
-    public function getRouter()
-    {
-        return $this->make("router");
-    }
-
-    /**
-     * 初始化分发器实例
-     * @return mixed
-     */
-    public function dispatcher()
-    {
-        return $this->make("dispatcher");
-    }
-
-    /**
-     * 初始化装载器实例
+     * 配置加载函数，根绝参数名读取配置文件
      *
-     * @param null $modules
-     * @return mixed
+     * @param  string $key 配置项文件名（不包含后缀）
+     * @return array
      */
-    public function autoload()
+    public function loadConfig($key)
     {
-        return $this->make("loader");
+        if (!isset($this->$key)) {
+            if(is_file(ROOT.'/Config/'.$key.'.php')) {
+                $this->$key = include ROOT.'/Config/'.$key.'.php';
+            } else {
+                throw new \Exception('config file '.$key.' not found', Ecode::Forbidden);
+            }
+        }
+
+        return $this->$key;
     }
+
+
+    /**
+     * 模块分发，根据请求地址前缀来分发到模块
+     *
+     * @param  string $prefix 请求地址前缀
+     * @param  string $name   模块名
+     * @return void
+     */
+    public function dispatch($prefix, $name)
+    {
+        $this->_module_enabled[$prefix] = ucfirst($name);
+    }
+
+
+    /**
+     * 设置系统错误处理
+     * @param $level
+     * @param $message
+     * @param string $file
+     * @param int $line
+     * @param array $context
+     * @throws \Exception
+     */
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
+    {
+        throw new \Exception($message, Ecode::ApiCallError);
+    }
+
+
+    /**
+     * 设置系统异常处理
+     * @param \Exception $e
+     * @throws \Exception
+     */
+    public function handleException(\Exception $e)
+    {
+        throw new \Exception($e->getMessage(), $e->getCode());
+    }
+
 
     /**
      * 初始化ORM数据库实例
@@ -168,21 +189,68 @@ class App extends Container
 
 
     /**
-     * 初始化中间件
+     * 构建中间件
      *
      * @param $cls
      * @param $middleware
      * @param bool|false $is_static
      */
-    public static function middleware($cls, $middleware, $is_static = false)
+    public static function middleware($name)
     {
         $instance = static::getInstance();
-        if (!$is_static) {
-            $instance->singleton($cls, $cls);
-            return $instance->make($cls)->middleware($middleware);
-        }
+        return $instance->dispatcher()->getMiddleware($name);
+    }
 
-        $cls::middleware($middleware);
+
+    /**
+     * 初始化请求实例
+     * @return mixed
+     */
+    public function getRequest()
+    {
+        return $this->make("request");
+    }
+
+
+    /**
+     * 初始化响应实例
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->make("response");
+    }
+
+
+    /**
+     * 初始化当前路由实例
+     * @return mixed
+     */
+    public function getRouter()
+    {
+        return $this->make("router");
+    }
+
+
+    /**
+     * 初始化分发器实例
+     * @return mixed
+     */
+    public function dispatcher()
+    {
+        return $this->make("dispatcher");
+    }
+
+
+    /**
+     * 初始化装载器实例
+     *
+     * @param null $modules
+     * @return mixed
+     */
+    public function autoload()
+    {
+        return $this->make("loader");
     }
 
 }

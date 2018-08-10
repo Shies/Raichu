@@ -14,6 +14,11 @@ class Request
      * @var array
      */
     protected static $_headers;
+
+
+    /** 自定义http请求地址
+     * @var string
+     */
     protected static $_httpuri;
 
 
@@ -90,20 +95,20 @@ class Request
      */
     public function getUrlPath()
     {
-        if (static::$_httpuri) {
-            return static::$_httpuri;
+        if (static::$_httpuri === null) {
+            $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)).'/';
+            $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
+
+            // Don't take query params on the path
+            if (strstr($uri, '?')) {
+                $uri = substr($uri, 0, strpos($uri, '?'));
+            }
+
+            // Remove trailing slash + enforce a slash at the start
+            return ($uri = '/'.trim($uri, '/'));
         }
 
-        $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)).'/';
-        $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
-
-        // Don't take query params on the path
-        if (strstr($uri, '?')) {
-            $uri = substr($uri, 0, strpos($uri, '?'));
-        }
-
-        // Remove trailing slash + enforce a slash at the start
-        return ($uri = '/'.trim($uri, '/'));
+        return static::$_httpuri;
     }
 
 

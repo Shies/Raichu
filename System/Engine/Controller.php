@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-
 /**
  * 逻辑控制及Model/View交互
  * User: gukai@bilibili.com
@@ -36,7 +35,7 @@ class Controller
      */
     public function __construct()
     {
-        $this->app = App::getInstance();
+        $this->app = $GLOBALS["app"];
         if ($this->autobind) {
             foreach ($this->autobind AS $name => $class) {
                 $this->app->bind($name, $class);
@@ -47,6 +46,8 @@ class Controller
             foreach ($this->singleton AS $name => $class) {
                 $this->app->singleton($name, $class);
             }
+
+            null;
         }
     }
 
@@ -61,16 +62,6 @@ class Controller
     public function make($abstract, array $parameters = [])
     {
         return $this->app->make($abstract, $parameters);
-    }
-
-
-    /**
-     * 初始化视图对象
-     * @return mixed
-     */
-    public function getView()
-    {
-        return $this->make("view");
     }
 
 

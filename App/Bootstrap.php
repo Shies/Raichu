@@ -1,50 +1,50 @@
 <?php
 
-use Raichu\Engine\App;
-use Raichu\Engine\Dispatcher;
-use Raichu\Provider\Session;
+Raichu\Provider\Session::init();
 
-include ROOT . '/Config/defined.php';
-// If has been set in php.ini, then override.
-Session::config();
-assert_options(ASSERT_ACTIVE, true);
-assert_options(ASSERT_WARNING, true);
-assert_options(ASSERT_BAIL, true);
-// assert_options(ASSERT_CALLBACK, ASSERT_ALERT);
+// App Instance
+$app = Raichu\Engine\App::getInstance();
+if ($app->getRequest()->getMethod() == 'OPTIONS') {
+    $app->getResponse()->abort(200);
+    exit;
+}
 
-
-$app = App::getInstance();
+// Init common function library
+$app->loadConfig("defined");
 
 // Init common config
-$app->config = include ROOT . '/Config/config.php';
+$app->loadConfig("config");
 
 // Enable Debug
 $app->openDebug();
 
 // Init Database
-$options = include ROOT . '/Config/database.php';
+$options = $app->loadConfig('database');
 $app->setDB($options);
-
-// Init Dispacher
-$app->dispatcher()->parseRouterUrl($app->getRequest());
 
 // Init Router
 $router = $app->getRouter();
+
+// init Dispatcher
+$dispatcher = $app->dispatcher();
 
 // Init Loader
 $app->autoload();
 
 
 try {
-    $files = ROOT.'/App/Modules/*/route*.*';
-    foreach (glob($files) AS $val) {
-        require_once $val;
+    $path = $app->getRequest()->getUrlPath();
+    foreach ($app->config["modules"] AS $module => $prefix) {
+        if (strpos($path, $prefix) !== false) {
+            include APP_PATH.'/Modules/'.ucfirst($module).'/route.php';
+            break;
+        }
     }
 
-    $router->run($app->getRequest());
+    $dispatcher->dispatch($app->getRequest());
 } catch (Exception $e) {
     $data['code'] = $e->getCode();
-    $data['msg'] = $e->getMessage();
+    $data['message'] = $e->getMessage();
 
     // $app->getLogger()->error('[Exception]: '.$data['msg']);
 

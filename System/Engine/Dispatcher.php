@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-use Raichu\Engine\App;
 /**
  * 分发器.
  * User: Shies
@@ -60,9 +59,9 @@ class Dispatcher
      */
     public function __construct()
     {
-        $this->app = App::getInstance();
+        $this->app = $GLOBALS["app"];
         $this->router = $this->app->getRouter();
-        $this->view = $this->app->getView();
+        $this->view = $this->app->make("view");
     }
 
 
@@ -115,14 +114,13 @@ class Dispatcher
     public function dispatch(Request $request, $uri = null)
     {
         $req = $uri ? $request->setUri($uri) : $request;
-        $this->parseRouterUrl($req);
         $this->router->run($req);
         return true;
     }
 
 
     /**
-     * 设置对象的参数
+     * 获取超级对象
      * @param array $params
      */
     public function getApp()
@@ -178,41 +176,24 @@ class Dispatcher
      *
      * @return array
      */
-    public function forward(array $url)
+    public function forward(array $segment)
     {
-        $this->parseSegment($url);
-
-        // create controller instance and call the specified method
-        $cont = (new $this->controller);
-
         try {
+            $this->parseSegment($segment);
             $ref = new \ReflectionMethod($this->controller, $this->method);
             $args = $ref->getParameters();
 
-            $first = array_shift($args);
-            if (isset($first->name)) {
-                if ($first->name == "request") {
-                    $first = $this->app->getRequest();
+            $params = [];
+            $params = array_merge($params, $this->args);
+            foreach ($args AS $object) {
+                if (isset($object->getClass()->name)) {
+                    if ($object->getClass()->name == Request::class) {
+                        array_unshift($params, $this->app->getRequest());
+                        break;
+                    }
                 }
             }
-
-            // 如果第一个参数不是request,证明是普通参数
-            $args = $this->args;
-            if (!$first instanceof Request) {
-                $first = array_shift($args);
-            }
-
-            if ($first) {
-                if (0 == count($args)) {
-                    $ref->invokeArgs($cont, [$first]);
-                } elseif (1 == count($args)) {
-                    $ref->invokeArgs($cont, [$first, $args[0]]);
-                } elseif (2 == count($args)) {
-                    $ref->invokeArgs($cont, [$first, $args[0], $args[1]]);
-                }
-            } else {
-                $ref->invokeArgs($cont, []);
-            }
+            $ref->invokeArgs(new $this->controller, $params);
         } catch(\Exception $e) {
             return false;
         }
@@ -225,7 +206,7 @@ class Dispatcher
      */
     private function parseSegment(array $url)
     {
-        $this->args = isset($url['params']) ? $url['params'] : null;
+        $this->args = isset($url['params']) ? $url['params'] : [];
         $this->method = isset($url['action']) ? $url['action'] : 'index';
         $this->controller = isset($url['controller'])
             ? $url['controller']

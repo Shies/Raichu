@@ -39,9 +39,3 @@ define('DEBUG', 1);
 define('IS_CLI', (PHP_SAPI === 'cli'));
 // 定义是否 windows 环境
 define('IS_WIN', (DIRECTORY_SEPARATOR === '\\'));
-// 定义断言alert回调
-// define('ASSERT_ALERT',
-//    function ($file, $line, $code) {
-//        echo "<hr>Assertion Failed: File '$file'<br /> Line '$line'<br /> Code '$code'<br /><hr />";
-//    }
-//);

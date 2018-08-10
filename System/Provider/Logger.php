@@ -254,7 +254,7 @@ class Logger
     private function configure($path = null)
     {
         if (!$path = static::$localConfig) {
-            $path = LOG_PATH .'/Raichu.log';
+            $path = '/data/logs/Raichu.log';
         }
 
         return $path;
@@ -275,7 +275,7 @@ class Logger
 
         $this->pushProcessor(function($level, $msg, $path) {
             $msg = $this->convert($msg);
-            syslog($level, $msg);
+            // syslog($level, $msg);
             return $this->fileLock("(".date('Y-m-d H:i:s').")=> ".$msg, $path);
         });
 

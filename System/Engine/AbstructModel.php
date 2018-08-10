@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-use Raichu\Engine\Model;
 /**
  * 抽象模型基类.
  * User: gukai@bilibili.com
@@ -46,8 +45,12 @@ abstract class AbstractModel extends Model
      */
     public function initialize()
     {
+        try {
+            parent::__construct($this->getSource(), $this->getDBName());
+        } catch (\Exception $ex) {
+            throw $ex;
+        }
         $this->_backup = static::$_tbprefix . $this->_table;
-        parent::__construct($this->getSource(), $this->getDBName());
     }
 
 

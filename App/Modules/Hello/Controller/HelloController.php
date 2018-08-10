@@ -3,6 +3,8 @@ namespace Hello\Controller;
 use Hello\Model\HelloModel;
 use Hello\Provider\HelloProvider;
 use Raichu\Engine\AbstractController;
+use Raichu\Engine\Request;
+use Raichu\Engine\App;
 
 /**
  * 你好世界.
@@ -27,7 +29,7 @@ class HelloController extends AbstractController
 
     public function beforeExecuteRoute($dispatcher)
     {
-        \XsrfMiddleware::getInstance($this->app)->verify();
+        App::middleware(\XsrfMiddleware::class)->verify();
     }
 
 
@@ -37,7 +39,7 @@ class HelloController extends AbstractController
     }
 
 
-    public function index($request)
+    public function index(Request $request)
     {
         // forp_start();
         $this->make("dispatcher")->forward(["action" => "shakehands"]);
@@ -55,11 +57,11 @@ class HelloController extends AbstractController
     }
 
 
-    public function shakehands($request)
+    public function shakehands(Request $request)
     {
         echo $request->get('id') ?: 0;
         var_dump($this->hello());
-        echo $this->listen($request);
+        $this->listen($request);
     }
 
 
@@ -69,7 +71,7 @@ class HelloController extends AbstractController
     }
 
 
-    public function listen($request)
+    public function listen(Request $request)
     {
         echo $request->get('id') ?: 0;
         var_dump($this->make("hello_provider")->music());

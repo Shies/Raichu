@@ -4,6 +4,9 @@ use Raichu\Engine\AbstractController;
 use Hello\Model\HelloModel;
 use Hello\Controller\HelloController;
 use Hello\Provider\HelloProvider;
+use Raichu\Engine\Request;
+use Raichu\Provider\Redis;
+use World\Model\WorldModel;
 use World\Provider\WorldProvider;
 /**
  * 世界你好.
@@ -17,6 +20,7 @@ class WorldController extends AbstractController
     protected $singleton = [
         'world_provider' => WorldProvider::class,
         'hello_model' => HelloModel::class,
+        'world_model' => WorldModel::class,
         'hello_provider' => HelloProvider::class,
         'hello_control' => HelloController::class,
     ];
@@ -40,11 +44,18 @@ class WorldController extends AbstractController
     }
 
 
-    public function hello($request)
+    public function hello(Request $request)
     {
         echo $this->make("hello_model")->shakehands();
         echo $this->make("hello_provider")->music();
         echo $this->make("hello_control")->index($request);
+    }
+
+
+    public function world(Request $request)
+    {
+        echo $this->make("world_model")->getDBName();
+        echo $this->make("world_model")->getTable();
     }
 
 

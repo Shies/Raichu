@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-use Raichu\Engine\Router;
 /**
  * 装载器,支持自动/手动.
  * User: gukai@bilibili.com
@@ -58,12 +57,12 @@ class Loader
             return true;
         }
 
-        $fileName = ucfirst(trim($file, 'php')).$suffix;
+        $fileName = ucfirst(trim($file, '.php')).$suffix;
 
         $result = [];
         static::traversing(APP_PATH.$path, $result);
         foreach ($result AS $val) {
-            if (basename($val) == $fileName) {
+            if (ucfirst(basename($val)) == $fileName) {
                 include_once $val;
                 break;
             }

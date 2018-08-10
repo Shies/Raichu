@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-
 /**
  * Container容器类，实现依赖注入
  * 通过容器类，使类的绑定与实例化解耦
@@ -113,7 +112,7 @@ class Container implements \ArrayAccess
             }
             return $reflector->newInstanceArgs($parameters);
         } catch (\Exception $e) {
-            return false;
+            throw $e;
         }
     }
 

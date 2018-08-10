@@ -6,8 +6,11 @@
  * Time: 下午4:19
  */
 return [
-    // 开启全局公共模块
-    'modules'       => ['Hello', 'World'],
+    // 开启模块名=>路由前缀
+    'modules' => [
+        'hello' => "/api/hello",
+        'world' => "/api/world"
+    ],
 
     // 开启全局公共控制器
     'controllers'   => [],
@@ -39,4 +42,11 @@ return [
         'logger' => 'manager',
         'datetimeFormat' => 'Y:m:d H:i:s',
     ],
+
+    // redis config
+    'redis' => [
+        'host' => '127.0.0.1',
+        'port' => '6379',
+        'auth' => '229616801',
+    ]
 ];

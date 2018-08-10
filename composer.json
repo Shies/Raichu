@@ -6,18 +6,19 @@
         }
     },
     "require": {
-        "itsgoingd/clockwork": "~1.9",
+        "overtrue/laravel-wechat": "~3.0",
+        "itsgoingd/clockwork": "~2.2",
         "j4mie/idiorm": "^1.5",
         "PHPMailer/PHPMailer": "^5.2",
-        "symfony/console": "^2.7",
-        "gukai/php7-forp": "dev-master"
+        "symfony/console": "^2.7"
     },
     "autoload": {
-        "classmap": [
-            "System/Provider",
-            "System/Engine",
-            "System/Middleware"
-        ]
+        "files": [
+            "System/Provider/function.php"
+        ],
+        "psr-4": {
+            "Raichu\\": "System/"
+        }
     },
     "scripts": {
         "post-install-cmd": [

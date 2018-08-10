@@ -5,7 +5,9 @@
  * Date: 17/3/2
  * Time: 下午12:32
  */
-$router->get('/api/hello/logger', 'HelloController@logger');
-$router->get('/api/hello/shakehands', 'HelloController@shakehands');
-$router->get('/api/hello/index', 'HelloController@index');
-$router->get('/api/hello/listen', 'HelloController@listen');
+$router->prefix("/api/hello", "hello");
+
+$router->get('/logger', 'HelloController@logger');
+$router->get('/shakehands', 'HelloController@shakehands');
+$router->get('/index', 'HelloController@index');
+$router->get('/listen', 'HelloController@listen');

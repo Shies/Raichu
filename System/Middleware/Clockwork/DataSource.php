@@ -37,9 +37,10 @@ class DataSource extends DS
     {
         $request->timelineData = $this->timeline->finalize($request->time);
         $request->databaseQueries = $this->databaseQueries;
-        $routeInfo = $this->app->getRouter()->getInfo();
-        $request->controller = isset($routeInfo['controller']) ? $routeInfo['controller'] : null;
-        $request->method = isset($routeInfo['method']) ? $routeInfo['method'] : null;
+        $router = $this->app->getRouter();
+        $router->parseUrl($this->app->getRequest());
+        $request->controller = $router->fetchController();
+        $request->method = $router->fetchMethod();
         $request->getData = $this->app->getRequest()->get();
         $request->postData = $this->app->getRequest()->getPost();
 

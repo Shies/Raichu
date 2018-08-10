@@ -27,12 +27,26 @@ class CacheStorage extends Storage
         return static::$_memcached;
     }
 
-    public function retrieve($id = null, $last = null)
+    public function store(Request $request)
     {
-        if (!$id) {
-            return;
-        }
+        $json = @json_encode($this->applyFilter($request->toArray()));
+        static::getMemcached($this->host, $this->port)->set('clockwork_'.$request->id, $json, 30);
+    }
 
+
+    public function retrieveAsJson($id = null)
+    {
+        $requests = $this->find($id);
+
+        if (!$requests)
+            return null;
+
+        return $requests->toJson();
+    }
+
+
+    public function find($id)
+    {
         if ($data = static::getMemcached($this->host, $this->port)->get('clockwork_'.$id)) {
             return new Request(json_decode($data, true));
         }
@@ -40,8 +54,29 @@ class CacheStorage extends Storage
         return false;
     }
 
-    public function store(Request $request)
+    public function all()
     {
-        static::getMemcached($this->host, $this->port)->set('clockwork_'.$request->id, @json_encode($this->applyFilter($request->toArray())), 30);
+        return true;
     }
+
+    public function latest()
+    {
+        return true;
+    }
+
+    public function previous($id, $count = null)
+    {
+        return true;
+    }
+
+    public function next($id, $count = null)
+    {
+        return true;
+    }
+
+    public function cleanup()
+    {
+        return true;
+    }
+
 }

@@ -1,6 +1,5 @@
 <?php
 namespace Raichu\Engine;
-use Raichu\Engine\App;
 /**
  * 中间件接口.
  * User: gukai@bilibili.com
