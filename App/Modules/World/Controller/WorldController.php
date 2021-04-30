@@ -54,7 +54,7 @@ class WorldController extends AbstractController
 
     public function world(Request $request)
     {
-        echo $this->make("world_model")->getDBName();
+        echo $this->make("world_model")->getDataBase();
         echo $this->make("world_model")->getTable();
     }
 
