@@ -15,7 +15,7 @@ return [
             PDO::ATTR_PERSISTENT => false,
         ),
         'id_column_overrides' => [
-            'sysconfig' => 'name',
+            // to do override of params
         ],
     ],
 ];

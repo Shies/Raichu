@@ -9,7 +9,7 @@ class WorldCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('world:hello')->setDescription('raichu');
+        $this->setName('world:hello')->setDescription('Raichu');
         $this->app = App::getInstance();
     }
 

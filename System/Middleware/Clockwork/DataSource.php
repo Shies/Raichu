@@ -26,7 +26,7 @@ class DataSource extends DS
     public function __construct()
     {
         $this->timeline = new Timeline();
-        $this->app = App::getInstance();
+        $this->app = $GLOBALS['app'];
     }
 
     /**

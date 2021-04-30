@@ -8,5 +8,5 @@
 $router->prefix("/api/world", "world");
 
 $router->get('index', 'WorldController@hello');
-$router->get('shakehands', 'WorldController@shakehands');
 $router->get('world', 'WorldController@world');
+$router->get('shakehands', 'WorldController@shakehands');

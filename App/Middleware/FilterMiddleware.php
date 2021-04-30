@@ -1,8 +1,8 @@
 <?php
 
 use Raichu\Engine\App;
-use Raichu\Provider\Session;
 use Raichu\Engine\Middleware;
+use Raichu\Provider\Session;
 
 /**
  * 用户权限控制类
@@ -23,6 +23,7 @@ class FilterMiddleware implements Middleware
     }
 
 
+    # see https://github.com/Shies/privileges
     public function checkAdmin()
     {
         $this->isLogin();

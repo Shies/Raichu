@@ -71,7 +71,7 @@ abstract class AbstractController extends Controller
      * @param $code
      * @return string
      */
-    public static function getResponseDescription($code)
+    public static function getResponseDescription($code = null)
     {
         $codes = array(
             // Informational 1xx
@@ -123,9 +123,11 @@ abstract class AbstractController extends Controller
             509 => 'Bandwidth Limit Exceeded'
         );
 
-        $result = (isset($codes[$code])) ?
-            $codes[$code] :
-            'Unknown Status Code';
+        $result = (isset($codes[$code]))
+            ? $codes[$code]
+            : ($code)
+                ? $codes
+                : 'Unknown Status Code';
 
         return $result;
     }

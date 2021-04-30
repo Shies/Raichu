@@ -2,7 +2,7 @@
 namespace Raichu\Engine;
 /**
  * 分发器.
- * User: Shies
+ * User: gukai@bilibili.com
  * Date: 2017/3/5
  * Time: 下午5:37
  */
@@ -22,16 +22,16 @@ class Dispatcher
     protected $view;
 
     /**
-     * 获取APP对象
-     * @var object
-     */
-    protected $app;
-
-    /**
-     * 立刻的刷新
+     * 立刻隐式刷新
      * @var boolean
      */
     protected $instantly_flush;
+
+    /**
+     * 已启动的模块, 来源/Config/config.php
+     * @var array
+     */
+    protected $module_enabled;
 
     /**
      * 根据url获取指定的控制器
@@ -62,6 +62,19 @@ class Dispatcher
         $this->app = $GLOBALS["app"];
         $this->router = $this->app->getRouter();
         $this->view = $this->app->make("view");
+    }
+
+
+    /**
+     * 模块分发，根据请求地址前缀来分发到模块
+     *
+     * @param  string $prefix 请求地址前缀
+     * @param  string $name   模块名
+     * @return void
+     */
+    public function enable($prefix, $name)
+    {
+        $this->module_enabled[$prefix] = ucfirst($name);
     }
 
 
@@ -120,12 +133,15 @@ class Dispatcher
 
 
     /**
-     * 获取超级对象
-     * @param array $params
+     * 构建单利或者普通对象
+     *
+     * @param $abstract
+     * @param array $parameters
+     * @return mixed
      */
-    public function getApp()
+    public function make($abstract, array $parameters = null)
     {
-        return $this->app;
+        return $this->app->make($abstract, $parameters);
     }
 
 
@@ -133,17 +149,9 @@ class Dispatcher
      * 301/302重定向
      * @param string $url
      */
-    public function redirect($uri, $method = 'location', $http_response_code = 302)
+    public function redirect($uri, $method = 'location', $http_response_code = 301)
     {
-        switch ($method) {
-            case 'refresh':
-                header("Refresh:0;url=".$uri);
-                break;
-            default:
-                header("Location: ".$uri, true, $http_response_code);
-                break;
-        }
-        exit;
+        $this->app->getResponse()->redirect($uri, $method, $http_response_code);
     }
 
 
@@ -174,7 +182,7 @@ class Dispatcher
      * params => [one, two, three]
      * 控制器之间互相回调
      *
-     * @return array
+     * @return bool|void
      */
     public function forward(array $segment)
     {

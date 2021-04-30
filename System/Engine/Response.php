@@ -19,7 +19,7 @@ class Response
      * 通过设置成员变量来设置响应数据
      *
      * @param  string $name  键值
-     * @param  mix    $value 键值
+     * @param  mixed  $value 键值
      * @return void
      */
     public function __set($name, $value)
@@ -57,9 +57,16 @@ class Response
      *
      * @param string $url 地址
      */
-    public function redirect($url)
+    public function redirect($uri, $method = 'location', $http_response_code = 302)
     {
-        header("Location: {$url}");
+        switch ($method) {
+            case 'refresh':
+                header("Refresh:0;url=".$uri);
+                break;
+            default:
+                header("Location: ".$uri, true, $http_response_code);
+                break;
+        }
         exit;
     }
 
@@ -67,7 +74,7 @@ class Response
     /**
      * 根据制定类型响应内容
      *
-     * @param string $data     结构体
+     * @param mixed $data     结构体
      * @param string $type     类型
      * @param int $json_option
      */
@@ -96,9 +103,9 @@ class Response
      */
     public function abort($code, $message = '')
     {
-        $accept_code = [404, 405, 500, 502, 503, 504];
-        if (!in_array($code, $accept_code)) {
-            $code = 500;
+        $accept_code = AbstractController::getResponseDescription();
+        if (!in_array($code, array_keys($accept_code))) {
+            $code = 500; // Internal Server Error
         }
         if (!$message) {
             $message = $code.' '.AbstractController::getResponseDescription($code);

@@ -107,7 +107,7 @@ class App extends Container
      * 配置加载函数，根绝参数名读取配置文件
      *
      * @param  string $key 配置项文件名（不包含后缀）
-     * @return array
+     * @return mixed
      */
     public function loadConfig($key)
     {
@@ -120,19 +120,6 @@ class App extends Container
         }
 
         return $this->$key;
-    }
-
-
-    /**
-     * 模块分发，根据请求地址前缀来分发到模块
-     *
-     * @param  string $prefix 请求地址前缀
-     * @param  string $name   模块名
-     * @return void
-     */
-    public function dispatch($prefix, $name)
-    {
-        $this->_module_enabled[$prefix] = ucfirst($name);
     }
 
 

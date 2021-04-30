@@ -26,9 +26,9 @@ class WorldModel extends AbstractModel
     }
 
 
-    public function getDBName()
+    public function getDataBase()
     {
-        return parent::getDBName();
+        return parent::getDataBase();
     }
 
 }

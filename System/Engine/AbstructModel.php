@@ -22,6 +22,7 @@ abstract class AbstractModel extends Model
 
     /**
      * 备份当前操作数据表
+     * @var string
      */
     protected $_backup;
 
@@ -46,7 +47,7 @@ abstract class AbstractModel extends Model
     public function initialize()
     {
         try {
-            parent::__construct($this->getSource(), $this->getDBName());
+            parent::__construct($this->getSource(), $this->getDataBase());
         } catch (\Exception $ex) {
             throw $ex;
         }
@@ -162,7 +163,7 @@ abstract class AbstractModel extends Model
      *
      * @return string
      */
-    public function getDBName()
+    public function getDataBase()
     {
         return $this->_database;
     }
@@ -199,7 +200,7 @@ abstract class AbstractModel extends Model
      *
      * @param mixed INSERT, DELETE, UPDATE
      */
-    public function setBuilder($table, array $data, $mode = 'INSERT|SELECT|UPDATE')
+    public function setBuilder($table, array $data, $mode = 'INSERT|DELETE|UPDATE')
     {
         if (empty($data)) {
             return false;
@@ -210,7 +211,7 @@ abstract class AbstractModel extends Model
         }
 
         // Request a transaction
-        $transaction = App::getDB($this->getDBName());
+        $transaction = App::getDB($this->getDataBase());
         $transaction->beginTransaction();
         try {
             $res = null;

@@ -28,7 +28,7 @@ class Session
         ini_set("session.cookie_httponly", 1);
         // ini_set('session.cookie_path', '/');
         // ini_set('session.cookie_domain', '.bilibili.com');
-        ini_set('session.name', 'bili');
+        ini_set('session.name', 'Raichu');
         if (!session_id()) {
             session_start();
         }

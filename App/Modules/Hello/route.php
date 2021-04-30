@@ -7,7 +7,7 @@
  */
 $router->prefix("/api/hello", "hello");
 
-$router->get('/logger', 'HelloController@logger');
-$router->get('/shakehands', 'HelloController@shakehands');
 $router->get('/index', 'HelloController@index');
+$router->get('/logger', 'HelloController@logger');
 $router->get('/listen', 'HelloController@listen');
+$router->get('/shakehands', 'HelloController@shakehands');

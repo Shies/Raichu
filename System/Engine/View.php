@@ -1,7 +1,7 @@
 <?php
 namespace Raichu\Engine;
 /**
- * 视图渲染-View.
+ * 视图渲染.
  * User: gukai@bilibili.com
  * Date: 17/2/6
  * Time: 下午6:57

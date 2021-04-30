@@ -5,6 +5,7 @@ Raichu\Provider\Session::init();
 // App Instance
 $app = Raichu\Engine\App::getInstance();
 if ($app->getRequest()->getMethod() == 'OPTIONS') {
+    // jsonp cross
     $app->getResponse()->abort(200);
     exit;
 }
@@ -46,7 +47,7 @@ try {
     $data['code'] = $e->getCode();
     $data['message'] = $e->getMessage();
 
-    // $app->getLogger()->error('[Exception]: '.$data['msg']);
+    // $app->getLogger()->error('[Exception]: '.$data['message']);
 
     $app->getResponse()->ajaxReturn($data);
 }

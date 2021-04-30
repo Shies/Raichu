@@ -255,7 +255,7 @@ class Container implements \ArrayAccess
      * 用判断容器类成员变量是否存在的方式检查数据.
      *
      * @param  string $key 键名
-     * @return void
+     * @return void|bool
      */
     public function __isset($key)
     {

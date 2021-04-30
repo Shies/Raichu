@@ -9,7 +9,7 @@ class HelloCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('hello:world')->setDescription('raichu');
+        $this->setName('hello:world')->setDescription('Raichu');
         $this->app = App::getInstance();
     }
 

@@ -27,7 +27,7 @@ class Redis
         }
 
         $redis = new \Redis();
-        $config = App::getInstance()->loadConfig('config')["redis"];
+        $config = $GLOBALS['app']->loadConfig('config')["redis"];
         $redis->connect($config['host'], $config['port']);
         $redis->auth($config["auth"]);
 

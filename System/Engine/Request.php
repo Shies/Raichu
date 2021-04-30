@@ -16,7 +16,8 @@ class Request
     protected static $_headers;
 
 
-    /** 自定义http请求地址
+    /**
+     * 自定义http请求地址
      * @var string
      */
     protected static $_httpuri;
@@ -45,7 +46,7 @@ class Request
 
     /**
      * 获取所有headers的参数
-     * @return vold
+     * @return void
      */
     protected static function getallheaders()
     {
@@ -81,10 +82,12 @@ class Request
 
     /**
      * 获取当前访问的URL
-     * @return mixed
+     * @return string
      */
     public function getUrl()
     {
+        // the this, you can use other design rule;
+        // maybe has other rule type
         return $_SERVER['REQUEST_URI'];
     }
 
@@ -149,7 +152,7 @@ class Request
      *
      * @param string $name
      * @param string $default
-     * @return string
+     * @return string|array
      */
     public function get($name = '', $default = '')
     {
@@ -166,7 +169,7 @@ class Request
      *
      * @param string $name
      * @param string $default
-     * @return string
+     * @return string|array
      */
     public function getPost($name = '', $default = '')
     {
@@ -183,7 +186,7 @@ class Request
      *
      * @param string $name
      * @param string $default
-     * @return string
+     * @return string|array
      */
     public function getRequest($name = '', $default = '')
     {
@@ -212,7 +215,7 @@ class Request
      *
      * @param $name
      * @param string $tp
-     * @return string
+     * @return string|mixed
      */
     public function getFile($name, $tp = '')
     {

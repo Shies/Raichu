@@ -209,7 +209,9 @@ class Logger
     }
 
 
-
+    /**
+     * @return array
+     */
     private function debug_backtrace()
     {
         $return = [null, null];
@@ -224,7 +226,10 @@ class Logger
     }
 
 
-
+    /**
+     * @param $return
+     * @param $error
+     */
     private function backtrace(&$return, $error)
     {
         $file = str_replace(ROOT, '', $error['file']);
@@ -242,7 +247,6 @@ class Logger
 
         return ($return);
     }
-
 
 
     /**

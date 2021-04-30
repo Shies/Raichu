@@ -9,7 +9,7 @@ namespace World\Provider;
 class WorldProvider
 {
 
-    public function lets()
+    public function letus()
     {
         return 'hello world';
     }

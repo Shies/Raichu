@@ -16,8 +16,8 @@ define('APP_PATH', ROOT. '/App');
 define('TPL_PATH', ROOT. '/App/Tpl');
 define('PROVIDER_PATH', ROOT. '/System/Provider');
 // 外部库所在目录
-define('DATA_PATH', ROOT. '/data');
-define('CACHE_PATH', ROOT. '/data/cache');
+define('DATA_PATH', ROOT. '/Data');
+define('CACHE_PATH', ROOT. '/Data/Cache');
 define('DS', '/');
 define('IN_ROOT', true);
 define('StartTime', microtime(true));
