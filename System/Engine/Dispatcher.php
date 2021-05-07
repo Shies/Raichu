@@ -1,7 +1,7 @@
 <?php
 namespace Raichu\Engine;
 /**
- * 分发器/调度器
+ * 分发器/调度器.
  * User: gukai@bilibili.com
  * Date: 2017/3/5
  * Time: 下午5:37
@@ -22,7 +22,7 @@ class Dispatcher
     protected $view;
 
     /**
-     * 立刻隐式刷新
+     * 即时刷新, flag=true|false
      * @var boolean
      */
     protected $instantly_flush;
@@ -92,6 +92,23 @@ class Dispatcher
             $this->view->setPath(TPL_PATH);
         }
 
+        /* ------------------------------- */
+        // ob_start();
+        // for ($i = 0; $i < 10; $i += 1) {
+        //   ob_start();
+        //   echo $i;
+        //   $ret = ob_get_contents();
+        //   ob_end_clean();
+        //
+        //   echo $ret."\n";
+        //   flush();
+        //   ob_flush();
+        //   usleep(300000);
+        // }
+        // echo "Done...";
+        // ob_end_flush();
+        /* ------------------------------- */
+
         $buffer = NULL;
         if ($display === true) {
             $this->view->render($name, $data, $display);
@@ -99,6 +116,8 @@ class Dispatcher
             $buffer = $this->view->render($name, $data, $display);
         }
 
+        // if we need run in console, then need set it for true;
+        // else if, it is for false;
         if ($this->instantly_flush) {
             flush();
             ob_flush();

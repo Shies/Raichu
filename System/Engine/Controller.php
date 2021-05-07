@@ -1,7 +1,7 @@
 <?php
 namespace Raichu\Engine;
 /**
- * 逻辑控制及Model/View交互
+ * 逻辑控制及Model/View交互.
  * User: gukai@bilibili.com
  * Date: 17/2/15
  * Time: 下午6:57
