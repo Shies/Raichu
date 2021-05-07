@@ -125,7 +125,7 @@ abstract class AbstractController extends Controller
 
         $result = (isset($codes[$code]))
             ? $codes[$code]
-            : ($code)
+            : (!$code)
                 ? $codes
                 : 'Unknown Status Code';
 

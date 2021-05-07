@@ -1,7 +1,7 @@
 <?php
 namespace Raichu\Engine;
 /**
- * 分发器.
+ * 分发器/调度器
  * User: gukai@bilibili.com
  * Date: 2017/3/5
  * Time: 下午5:37
@@ -84,7 +84,7 @@ class Dispatcher
      * @param $name
      * @param array $data
      * @param bool|false $display
-     * @return bool|null
+     * @return null|string
      */
     public function render($name, $data = [], $display = true)
     {
@@ -138,28 +138,60 @@ class Dispatcher
      * @param $abstract
      * @param array $parameters
      * @return mixed
+     *
+     * $this->make('pipe', function() {
+     *   $this->dummy[] = 'hello';
+     *	 return $this;
+     * })->make('pipe', function() {
+     *   $this->dummy[] = 'world';
+     *   return $this;
+     * })->make('pipe', function() {
+     *   return $this->dummy;
+     * });
      */
+    // Event loop and Event driver
     public function make($abstract, array $parameters = null)
     {
+        // Javascript Promise
+        // $this->reject();
+        // $this->resolve();
         return $this->app->make($abstract, $parameters);
     }
 
 
     /**
      * 301/302重定向
-     * @param string $url
+     *
+     * @param $uri
+     * @param string $method
+     * @param int $http_response_code
+     * @return bool
      */
-    public function redirect($uri, $method = 'location', $http_response_code = 301)
+    public function redirect($uri)
     {
-        $this->app->getResponse()->redirect($uri, $method, $http_response_code);
+        // The request whether success debug for null
+        if ($this->app->debug) {
+            echo $this->dispatch($this->app->getRequest(), $uri);
+        }
+
+        // https and http can all
+        if (strpos($uri, 'http') !== false) {
+            // position path
+            $this->app->getResponse()->redirect($uri, 'refresh');
+        } else {
+            // relative path
+            $this->app->getResponse()->redirect($uri, 'location');
+        }
+
+        return true;
     }
 
 
     /**
      * 通过调度器设置中间件
      *
-     * @param $cls
-     * @param $middleware
+     * @param $name
+     * @return false|null|object
      */
     public function getMiddleware($name)
     {
@@ -209,15 +241,17 @@ class Dispatcher
 
 
     /**
-     * 获取URL参数
-     * @param array $url
+     * 获取URL参数'
+     *
+     * @param array $uri
+     * @return void
      */
-    private function parseSegment(array $url)
+    private function parseSegment(array $uri)
     {
-        $this->args = isset($url['params']) ? $url['params'] : [];
-        $this->method = isset($url['action']) ? $url['action'] : 'index';
-        $this->controller = isset($url['controller'])
-            ? $url['controller']
+        $this->args = isset($uri['params']) ? $uri['params'] : [];
+        $this->method = isset($uri['action']) ? $uri['action'] : 'index';
+        $this->controller = isset($uri['controller'])
+            ? $uri['controller']
             : get_class(AbstractController::getInstance());
     }
 

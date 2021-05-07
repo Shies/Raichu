@@ -10,7 +10,7 @@ class Controller
 {
 
     /**
-     * 初始化Application实例
+     * 初始化App实例
      * @var object
      */
     protected $app;
