@@ -15,6 +15,9 @@ class HelloModel extends AbstractModel
     protected $_database = 'default';
     protected $_table = 'logger';
 
+    // @override
+    public static $_primary;
+
 
     public function __construct()
     {

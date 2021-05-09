@@ -20,9 +20,9 @@ class Session
 
     public function _init()
     {
-        $config = App::getInstance()->loadConfig('config')["redis"];
-        ini_set('session.save_handler', 'redis');
-        ini_set('session.save_path', 'tcp://'.$config["host"].':'.$config["port"].'?auth='.$config["auth"]);
+        // $config = App::getInstance()->loadConfig('config')["redis"];
+        // ini_set('session.save_handler', 'redis');
+        // ini_set('session.save_path', 'tcp://'.$config["host"].':'.$config["port"].'?auth='.$config["auth"]);
         ini_set('session.gc_maxlifetime', 86400);
         ini_set('session.cookie_lifetime', 86400);
         ini_set("session.cookie_httponly", 1);

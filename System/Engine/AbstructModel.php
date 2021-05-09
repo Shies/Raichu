@@ -85,7 +85,7 @@ abstract class AbstractModel extends Model
      * 数据插入函数(key/value)
      *
      * @param array $data
-     * @return mixed
+     * @return int
      */
     public function add(array $data)
     {
@@ -99,7 +99,7 @@ abstract class AbstractModel extends Model
      *
      * @param $id
      * @param bool|true $is_array
-     * @return bool
+     * @return array|object
      */
     public function find($id, $is_array = true)
     {
@@ -148,7 +148,7 @@ abstract class AbstractModel extends Model
 
 
     /**
-     * get table name
+     * get Source name
      *
      * @return string
      */
@@ -159,7 +159,7 @@ abstract class AbstractModel extends Model
 
 
     /**
-     * Get Database name.
+     * get Database name.
      *
      * @return string
      */
@@ -175,7 +175,7 @@ abstract class AbstractModel extends Model
      * @param $table
      * @param string|null $tableAlias Table alias to use in query.
      *
-     * @return Builder
+     * @return mixed|array
      */
     public function getBuilder($table, array $where = null, $id = null)
     {
@@ -196,9 +196,10 @@ abstract class AbstractModel extends Model
 
 
     /* *
-     * load curdbuilder set write operation
+     * Load curdbuilder set write operation
      *
-     * @param mixed INSERT, DELETE, UPDATE
+     * @param string $mode="INSERT|DELETE|UPDATE"
+     * @return mixed|array
      */
     public function setBuilder($table, array $data, $mode = 'INSERT|DELETE|UPDATE')
     {

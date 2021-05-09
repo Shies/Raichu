@@ -23,7 +23,7 @@ class FilterMiddleware implements Middleware
     }
 
 
-    # see https://github.com/Shies/privileges
+    # https://github.com/Shies/privileges
     public function checkAdmin()
     {
         $this->isLogin();
@@ -38,7 +38,7 @@ class FilterMiddleware implements Middleware
     public function isLogin()
     {
         if (!Session::has('uid')) {
-            echo "<script>parent.location.href='/login';</script>";
+            echo "<script>parent.location.href='/api/hello/index';</script>";
             exit;
         }
     }

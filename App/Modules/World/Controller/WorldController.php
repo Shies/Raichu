@@ -1,12 +1,12 @@
 <?php
 namespace World\Controller;
+
 use Raichu\Engine\AbstractController;
+use Raichu\Engine\Request;
 use Hello\Model\HelloModel;
+use World\Model\WorldModel;
 use Hello\Controller\HelloController;
 use Hello\Provider\HelloProvider;
-use Raichu\Engine\Request;
-use Raichu\Provider\Redis;
-use World\Model\WorldModel;
 use World\Provider\WorldProvider;
 /**
  * 世界你好.

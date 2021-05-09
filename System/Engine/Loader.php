@@ -46,8 +46,8 @@ class Loader
     /**
      * 载入指定模块的文件
      *
-     * @param $fileName
-     * @param $blockName
+     * @param string $file
+     * @param string $path
      * @param string $suffix
      * @return bool
      */
@@ -57,12 +57,12 @@ class Loader
             return true;
         }
 
-        $fileName = ucfirst(trim($file, '.php')).$suffix;
+        $filename = ucfirst(trim($file, '.php')).$suffix;
 
         $result = [];
         static::traversing(APP_PATH.$path, $result);
         foreach ($result AS $val) {
-            if (ucfirst(basename($val)) == $fileName) {
+            if (ucfirst(basename($val)) == $filename) {
                 include_once $val;
                 break;
             }
@@ -130,19 +130,19 @@ class Loader
     /**
      * 递归载入控制器文件函数
      *
-     * @param $name
+     * @param $class
      * @return bool|void
      */
-    public function load($classname)
+    public function load($class)
     {
-        if (isset(static::$loaded[$classname])) {
+        if (isset(static::$loaded[$class])) {
             return true;
         }
 
         $path = null;
 
         // Load class in module
-        $classname = trim($classname, '\\');
+        $classname = trim($class, '\\');
         $block = explode('\\', $classname);
         if (!in_array($block[0], ['Controller', 'Model', 'Provider'])) {
             $path .= '/Modules';

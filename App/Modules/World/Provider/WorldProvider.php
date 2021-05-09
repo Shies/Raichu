@@ -1,9 +1,9 @@
 <?php
 namespace World\Provider;
 /**
- * Created by PhpStorm.
- * User: bilibili
- * Date: 17/3/2
+ * let's go.
+ * User: gukai@bilibili.com
+ * Date: 2021/5/9
  * Time: 下午7:53
  */
 class WorldProvider

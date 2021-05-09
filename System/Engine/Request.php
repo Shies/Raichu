@@ -84,11 +84,10 @@ class Request
      * 获取当前访问的URL
      * @return string
      */
-    public function getUrl()
+    public function getUrl($default = '')
     {
-        // the this, you can use other design rule;
-        // maybe has other rule type
-        return $_SERVER['REQUEST_URI'];
+        // the this, you can use other design rule maybe has other rule type
+        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $default;
     }
 
 
@@ -100,7 +99,7 @@ class Request
     {
         if (static::$_httpuri === null) {
             $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)).'/';
-            $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
+            $uri = substr($this->getUrl(), strlen($basepath));
 
             // Don't take query params on the path
             if (strstr($uri, '?')) {
@@ -121,7 +120,9 @@ class Request
      */
     public function getMethod()
     {
-        $method = $_SERVER['REQUEST_METHOD'];
+        $method = isset($_SERVER['REQUEST_METHOD'])
+                ? $_SERVER['REQUEST_METHOD']
+                : 'GET';
 
         if ($method == 'HEAD') {
             ob_start();

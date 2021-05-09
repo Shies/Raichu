@@ -35,6 +35,7 @@ class App extends Container
 
     /**
      * 载入引擎核心类
+     * @!false
      */
     private function loadEngine()
     {
@@ -64,7 +65,7 @@ class App extends Container
 
     /**
      * 开启ClockWork Debug模式
-     * return void
+     * @return void
      */
     public function openDebug()
     {
@@ -112,7 +113,7 @@ class App extends Container
     public function loadConfig($key)
     {
         if (!isset($this->$key)) {
-            if(is_file(ROOT.'/Config/'.$key.'.php')) {
+            if (is_file(ROOT.'/Config/'.$key.'.php')) {
                 $this->$key = include ROOT.'/Config/'.$key.'.php';
             } else {
                 throw new \Exception('config file '.$key.' not found', Ecode::Forbidden);
@@ -125,8 +126,8 @@ class App extends Container
 
     /**
      * 设置系统错误处理
-     * @param $level
-     * @param $message
+     * @param int $level
+     * @param string $message
      * @param string $file
      * @param int $line
      * @param array $context
@@ -134,18 +135,20 @@ class App extends Container
      */
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
-        throw new \Exception($message, Ecode::ApiCallError);
+        // throw new \Exception($message, Ecode::ApiCallError);
+        return false;
     }
 
 
     /**
      * 设置系统异常处理
-     * @param \Exception $e
+     * @param \Exception $_exception
      * @throws \Exception
      */
-    public function handleException(\Exception $e)
+    public function handleException($_exception)
     {
-        throw new \Exception($e->getMessage(), $e->getCode());
+        // $this->handleError($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
+        return false;
     }
 
 
@@ -178,9 +181,8 @@ class App extends Container
     /**
      * 构建中间件
      *
-     * @param $cls
-     * @param $middleware
-     * @param bool|false $is_static
+     * @param string $name
+     * @return mixed
      */
     public static function middleware($name)
     {

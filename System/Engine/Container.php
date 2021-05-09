@@ -13,12 +13,12 @@ class Container implements \ArrayAccess
     /**
      * @var array $bindings 容器绑定的类名或者匿名方法
      */
-    protected $bindings = [];
+    public $bindings = [];
 
     /**
      * @var array $instances 容器绑定对象
      */
-    protected $instances = [];
+    public $instances = [];
 
     /**
      * @var array $data 注册器
@@ -98,7 +98,7 @@ class Container implements \ArrayAccess
      * @param  array  $parameters 构造参数
      * @return mixed
      */
-    public function build($concrete, array $parameters = [])
+    protected function build($concrete, array $parameters = [])
     {
         if ($concrete instanceof \Closure) {
             return $concrete($this, $parameters);
@@ -111,8 +111,8 @@ class Container implements \ArrayAccess
                 return new $concrete;
             }
             return $reflector->newInstanceArgs($parameters);
-        } catch (\Exception $e) {
-            throw $e;
+        } catch (\Exception $ex) {
+            throw $ex;
         }
     }
 

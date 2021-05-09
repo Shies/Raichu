@@ -1,7 +1,7 @@
 <?php
 namespace Hello\Provider;
 /**
- * 测试库.
+ * 逻辑Service测试库.
  * User: gukai@bilibili.com
  * Date: 17/2/13
  * Time: 下午7:27
@@ -15,6 +15,7 @@ class HelloProvider
     }
 
 
+    // @override
     public function middleware($middleware = null)
     {
         return "Hello ";

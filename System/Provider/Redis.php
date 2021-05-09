@@ -1,7 +1,5 @@
 <?php
 namespace Raichu\Provider;
-use Raichu\Engine\App;
-
 /**
  * Redis类
  * 封装了redis相关操作
@@ -27,7 +25,7 @@ class Redis
         }
 
         $redis = new \Redis();
-        $config = $GLOBALS['app']->loadConfig('config')["redis"];
+        $config = $GLOBALS["app"]->loadConfig('config')["redis"];
         $redis->connect($config['host'], $config['port']);
         $redis->auth($config["auth"]);
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of the Monolog package.
  *
- * (c) ___Shies <gukai@bilibili.com>
+ * (c) ____Shies <gukai@bilibili.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +18,7 @@ use \Exception;
  * It contains a stack of Handlers and a stack of Processors,
  * and uses them to store records that are added to it.
  *
- * @author ___Shies <gukai@bilibili.com>
+ * @author ____Shies <gukai@bilibili.com>
  */
 class Logger
 {
@@ -90,13 +90,13 @@ class Logger
 
 
     /**
-     * @var \this
+     * @var \$this
      */
     protected static $instance;
 
 
     /**
-     * @var \LocalConfig
+     * @var string $localPath
      */
     protected static $localConfig;
 
@@ -108,9 +108,10 @@ class Logger
 
 
     /**
+     * handle done. flag=true|false
      * @var bool
      */
-    protected $handle = true;
+    protected $handle;
 
 
 
@@ -138,8 +139,8 @@ class Logger
         if (!is_callable($callback)) {
             throw new Exception('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
         }
-        array_unshift($this->processors, $callback);
 
+        array_unshift($this->processors, $callback);
         return $this;
     }
 
@@ -171,20 +172,20 @@ class Logger
      *
      * @param $data
      * @param $path
-     * @return bool
+     * @return bool false|int
      */
     private function fileLock($data, $path)
     {
-        $fp = fopen($path, 'ab');
-        while (!flock($fp, LOCK_EX)) {
+        $handle = fopen($path, 'ab');
+        while (!flock($handle, LOCK_EX)) {
             usleep(100);
         }
 
-        $res = fwrite($fp, $data . PHP_EOL);
-        flock($fp, LOCK_UN);
-        fclose($fp);
+        $writed = fwrite($handle, $data . PHP_EOL);
+        flock($handle, LOCK_UN);
+        fclose($handle);
 
-        return $res;
+        return $writed;
     }
 
 
@@ -192,7 +193,7 @@ class Logger
      * 转换信息格式
      *
      * @param $message
-     * @return mixed
+     * @return string
      */
     private function convert($message)
     {
@@ -210,11 +211,16 @@ class Logger
 
 
     /**
+     * show error and show msg
      * @return array
      */
     private function debug_backtrace()
     {
-        $return = [null, null];
+        // show
+        $return = [
+            null, // msg
+            null, // error
+        ];
 
         $debug_backtrace = debug_backtrace();
         krsort($debug_backtrace);
@@ -232,20 +238,34 @@ class Logger
      */
     private function backtrace(&$return, $error)
     {
+        // error chain
+        $trace = '';
+        $msgs = '';
+        $errs = '';
+
+        // before replace error[file] is path of ROOT(/Config/defined.php);
         $file = str_replace(ROOT, '', $error['file']);
 
-        $func = isset($error['class']) ? $error['class'] : '';
-        $func .= isset($error['type']) ? $error['type'] : '';
-        $func .= isset($error['function']) ? $error['function'] : '';
-        if (empty($func)) {
-            return;
+        $trace = isset($error['class']) ? $error['class'] : '';
+        $trace .= isset($error['type']) ? $error['type'] : '';
+        $trace .= isset($error['function']) ? $error['function'] : '';
+        if (empty($trace)) {
+            return true;
         }
 
-        $return[0] .= $file.'('.$func.') => '.$error['line'].PHP_EOL;
-        $return[1] .= !empty($return[1]) ? ' ' : '';
-        $return[1] .= $file.'：'.$error['line'] . PHP_EOL;
+        reset($return);
+        foreach ($return AS &$undefined) {
+            if (isset($return[0])) {
+                $msgs = $file.'('.$trace.') => '.$error['line'].PHP_EOL;
+                $undefined = $msgs;
+            } else {
+                $errs = !empty($return[1]) ? ' ' : '';
+                $errs .= $file.'：'.$error['line'].PHP_EOL;
+                $undefined = $errs;
+            }
+        }
 
-        return ($return);
+        return !false;
     }
 
 
@@ -253,7 +273,7 @@ class Logger
      * 配置全局路径
      *
      * @param null $path
-     * @return \LocalConfig|null|string
+     * @param null|string $localPath
      */
     private function configure($path = null)
     {
@@ -283,6 +303,7 @@ class Logger
             return $this->fileLock("(".date('Y-m-d H:i:s').")=> ".$msg, $path);
         });
 
+        $this->handle = true;
         while ($this->getProcessors()) {
             $pop = $this->popProcessor();
             if (!($pop instanceof \Closure)) {
@@ -300,14 +321,17 @@ class Logger
 
 
     /**
-     * @param $errno
-     * @param $errmsg
-     * @param $errfile
-     * @param $errline
+     * 处理系统错误以及异常
+     * @param \Raichu\Engine\App $app
+     *
+     * global $app
+     * $app->handleError
      */
-    public function handleerror($errno, $errmsg, $errfile, $errline)
+    public function handleError($errno, $errmsg, $errfile, $errline)
     {
-        $this->addError($errmsg);
+        // temp pattern
+        // can rewrite
+        return $this->addError($errmsg);
     }
 
 

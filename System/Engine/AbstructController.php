@@ -47,10 +47,12 @@ abstract class AbstractController extends Controller
 
 
     /**
-     * 初始化方法
+     * @return \uuid package
+     * 初始化和释放资源
      */
     public function initialize()
     {
+        // override and rewrite
         return uniqid(md5(rand()), true);
     }
 
@@ -123,11 +125,11 @@ abstract class AbstractController extends Controller
             509 => 'Bandwidth Limit Exceeded'
         );
 
-        $result = (isset($codes[$code]))
+        $result = isset($codes[$code])
             ? $codes[$code]
-            : (!$code)
+            : (!$code
                 ? $codes
-                : 'Unknown Status Code';
+                : 'Unknown Status Code');
 
         return $result;
     }

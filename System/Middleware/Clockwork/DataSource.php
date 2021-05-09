@@ -2,7 +2,6 @@
 
 namespace Raichu\Middleware\Clockwork;
 
-use Raichu\Engine\App;
 use Clockwork\DataSource\DataSource as DS;
 use Clockwork\Request\Request;
 use Clockwork\Request\Timeline;
@@ -19,6 +18,7 @@ class DataSource extends DS
     protected $controller;
     protected $method;
     protected $databaseQueries = [];
+    protected $app;
 
     /**
      * Construct the Timeline. The HookClockwork class will add events.

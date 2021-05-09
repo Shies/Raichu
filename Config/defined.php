@@ -13,14 +13,14 @@
 define('DOC_PATH', ROOT. '/Public');
 // 项目所在目录
 define('APP_PATH', ROOT. '/App');
-define('TPL_PATH', ROOT. '/App/Tpl');
+define('TPL_PATH', ROOT. '/tests');
 define('PROVIDER_PATH', ROOT. '/System/Provider');
 // 外部库所在目录
 define('DATA_PATH', ROOT. '/Data');
 define('CACHE_PATH', ROOT. '/Data/Cache');
 define('DS', '/');
 define('IN_ROOT', true);
-define('StartTime', microtime(true));
+define('US_TIME', microtime(true));
 define('TIMESTAMP', time());
 // -----------------------------------------------------------------------------
 // 项目常量定义
@@ -37,5 +37,5 @@ define('DEBUG', 1);
 // -----------------------------------------------------------------------------
 // 定义是否 CLI 模式
 define('IS_CLI', (PHP_SAPI === 'cli'));
-// 定义是否 windows 环境
+// 定义是否 Windows 环境
 define('IS_WIN', (DIRECTORY_SEPARATOR === '\\'));

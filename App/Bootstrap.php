@@ -2,7 +2,7 @@
 
 Raichu\Provider\Session::init();
 
-// App Instance
+// Application Instance
 $app = Raichu\Engine\App::getInstance();
 if ($app->getRequest()->getMethod() == 'OPTIONS') {
     // jsonp cross
@@ -26,7 +26,7 @@ $app->setDB($options);
 // Init Router
 $router = $app->getRouter();
 
-// init Dispatcher
+// Init Dispatcher
 $dispatcher = $app->dispatcher();
 
 // Init Loader
@@ -43,11 +43,12 @@ try {
     }
 
     $dispatcher->dispatch($app->getRequest());
-} catch (Exception $e) {
+} catch (\Exception $e) {
     $data['code'] = $e->getCode();
     $data['message'] = $e->getMessage();
 
-    // $app->getLogger()->error('[Exception]: '.$data['message']);
+    // Log write
+    \Raichu\Provider\Logger::getInstance()->error('[Exception]: '.$data['message']);
 
     $app->getResponse()->ajaxReturn($data);
 }

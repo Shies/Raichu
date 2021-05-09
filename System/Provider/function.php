@@ -6,6 +6,12 @@
  * Time: 下午7:33
  */
 
+// new Raichu pointer
+function getInstance()
+{
+    return \Raichu\Engine\AbstractController::getInstance();
+}
+
 function is_mobile($mobile)
 {
     if (preg_match("/^1[2-9]{1}\d{9}$/",$mobile)) {
@@ -15,6 +21,7 @@ function is_mobile($mobile)
     }
 }
 
+// Can use \uuid package
 function createUniqueUid()
 {
     $uid = md5(uniqid(mt_rand(), true));
@@ -27,7 +34,6 @@ function createOrderNo()
     $ymd = date("Ymd");
     return $ymd.substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
 }
-
 
 function isWechat()
 {

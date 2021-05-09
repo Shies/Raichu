@@ -9,7 +9,7 @@
         "overtrue/laravel-wechat": "~3.0",
         "itsgoingd/clockwork": "~2.2",
         "j4mie/idiorm": "^1.5",
-        "PHPMailer/PHPMailer": "^5.2",
+        "phpmailer/phpmailer": "6.1.6",
         "symfony/console": "^2.7"
     },
     "autoload": {

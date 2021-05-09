@@ -9,7 +9,7 @@ return [
     'default' => [
         'connection_string' => 'mysql:host=127.0.0.1;port=3306;dbname=http_monitor',
         'username' => 'root',
-        'password' => '229616801',
+        'password' => '',
         'driver_options' => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => false,

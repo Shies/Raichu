@@ -41,21 +41,36 @@ class Response
 
 
     /**
+     * 获取协议头，默认http，也可以https
+     *
+     * @param string $default
+     * @return mixed|string
+     */
+    public function protocol($default = 'http')
+    {
+        return isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : $default;
+    }
+
+
+    /**
      * 设置HTTP响应头
      *
      * @param int $code 响应吗
+     * @return void
      */
     public function setHeader($code)
     {
         $message = AbstractController::getResponseDescription($code);
-        header("{$_SERVER['SERVER_PROTOCOL']} {$code} {$message}");
+        header("{$this->protocol()} {$code} {$message}");
     }
 
 
     /**
      * 重定向地址
      *
-     * @param string $url 地址
+     * @param string $uri
+     * @param string $method
+     * @param int $http_response_code
      */
     public function redirect($uri, $method = 'location', $http_response_code = 302)
     {
@@ -63,9 +78,11 @@ class Response
             case 'refresh':
                 header("Refresh:0;url=".$uri);
                 break;
-            default:
+            case 'location':
                 header("Location: ".$uri, true, $http_response_code);
                 break;
+            default:
+                return;
         }
         exit;
     }
@@ -110,7 +127,7 @@ class Response
         if (!$message) {
             $message = $code.' '.AbstractController::getResponseDescription($code);
         }
-        header($_SERVER['SERVER_PROTOCOL'].' '.$message);
+        header($this->protocol().' '.$message);
         echo $message;
     }
 

@@ -13,10 +13,19 @@ class WorldModel extends AbstractModel
     protected $_database = 'default';
     protected $_table = 'logger';
 
+    // @override
+    public static $_primary;
+
 
     public function __construct()
     {
         parent::initialize();
+    }
+
+
+    public function getDatabase()
+    {
+        return parent::getDataBase();
     }
 
 
@@ -26,9 +35,9 @@ class WorldModel extends AbstractModel
     }
 
 
-    public function getDataBase()
+    public function halt()
     {
-        return parent::getDataBase();
+        die();
     }
 
 }
