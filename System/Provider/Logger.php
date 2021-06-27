@@ -278,7 +278,7 @@ class Logger
     private function configure($path = null)
     {
         if (!$path = static::$localConfig) {
-            $path = '/data/logs/Raichu.log';
+            $path = '/tmp/data/logs/Raichu.log';
         }
 
         return $path;
