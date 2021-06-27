@@ -353,9 +353,9 @@ class Router
      *
      * @param array $routes Collection of route patterns and their handling functions
      *
-     * @return int The number of routes handled
+     * @return bool The number of routes handled
      */
-    protected function handle($routes, Request $request)
+    protected function handle(array $routes, Request $request)
     {
         // The current page URL
         $currentUri = $request->getUrlPath();
@@ -385,16 +385,17 @@ class Router
                 $params = array_merge([$request], $params);
 
                 if (is_array($route['fn'])) {
-                    $controller = static::$modules.'\\Controller\\'.$route['fn'][0];
-                    $route['fn'][0] = new $controller();
+                    list($controller, $method) = $route['fn'];
+                    $namespace = static::$modules.'\\Controller\\'.$controller;
+                    $instance = new $namespace();
 
-                    if (method_exists($route['fn'][0], 'beforeExecuteRoute')) {
-                        $route['fn'][0]->beforeExecuteRoute($this->app->dispatcher());
+                    if (method_exists($instance, 'beforeExecuteRoute')) {
+                        $instance->beforeExecuteRoute($this->app->dispatcher());
                     }
 
-                    call_user_func_array($route['fn'], $params);
-                    if (method_exists($route['fn'][0], 'afterExecuteRoute')) {
-                        $route['fn'][0]->afterExecuteRoute($this->app->dispatcher());
+                    call_user_func_array([$instance, $method], $params);
+                    if (method_exists($instance, 'afterExecuteRoute')) {
+                        $instance->afterExecuteRoute($this->app->dispatcher());
                     }
                 } else {
                     call_user_func_array($route['fn'], $params);

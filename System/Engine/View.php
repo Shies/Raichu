@@ -89,9 +89,11 @@ class View
                 extract($this->data);
             }
 
-            $path = "{$this->path}/{$name}.php";
-            ob_start();
+            $path = $this->path
+                        ? "{$this->path}/{$name}.php"
+                        : "{$name}.php";
 
+            ob_start();
             if (version_compare(PHP_VERSION, '5.4') >= 0 && !ini_get('short_open_tag') && function_exists('eval')) {
                 echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($path))));
             } else {

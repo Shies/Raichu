@@ -1,23 +1,27 @@
 <?php
 
-// dummy example
-function jumper_example()
-{
-    global $foo, $bar;
+$foo = isset($foo) ? $foo : null;
+$bar = isset($bar) ? $bar : null;
 
-    // heredoc for php and html
-    $nowdoc = <<<PHP
+// dummy example
+function welcome($p1, $p2)
+{
         echo "hello";
-        echo $foo;
+        echo $p1;
 ?>
 <?php
         echo "world";
-        echo "$bar";
+        echo "$p2";
 ?>
-PHP;
+
+<?php
+    // heredoc for php and html
+    $nowdoc = <<<HTML
+<div id="container">welcome flashing...</div>
+HTML;
 
     return $nowdoc;
 }
 
 // syntax i/o
-echo jumper_example();
+echo welcome($foo, $bar);

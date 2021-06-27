@@ -33,10 +33,11 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
      * DispatcherTest constructor.
      * @return void
      */
-    public function __construct($app)
+    public function __construct(\Raichu\Engine\App $app = null)
     {
-        // global $app;
-
+        if (is_null($app)) {
+            global $app;
+        }
         $this->dispatcher = $app->dispatcher();
         parent::__construct();
     }
@@ -124,6 +125,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
 
 
     /**
+     * pass done
      * clean global app object
      * window.location.href
      * @return void
@@ -148,14 +150,17 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
 
 
     /**
+     * pass done
      * Render flashing
      * use smarty template engine and origin php
      * @return void
      */
     function flashing()
     {
-        $foo = 'hello';
-        $bar = 'world';
+        ini_set("short_open_tag", 0);
+
+        $foo = 'foo';
+        $bar = 'bar';
 
         // 开启即时刷新 (invalid value of instantly_flush for true)
         // $this->dispatcher->instantly_flush = true;
@@ -163,11 +168,12 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         // 强制即时刷新 @override
         $this->instantly_flush = !false;
 
-        $this->render(TPL_PATH .'/heredoc.php');
-        $this->render(TPL_PATH .'/heredoc.php', [$foo, $bar], true);
+        echo TPL_PATH.'/heredoc';
+        // $this->render(TPL_PATH .'/heredoc');
+        // $this->render(TPL_PATH .'/heredoc', ['foo' => $foo, 'bar' => $bar], true);
 
         ob_start();
-        $buffer = $this->render(TPL_PATH .'/heredoc.php', [$foo, $bar], false);
+        $buffer = $this->render(TPL_PATH .'/heredoc', ['foo' => $foo, 'bar' => $bar], false);
         usleep(3000000);
         ob_end_flush();
 
@@ -177,6 +183,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
 
 
     /**
+     * pass done
      * @return array
      */
     function enabled()
@@ -184,11 +191,12 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         $this->dispatcher->enable('/api/hello', 'hello');
         $this->dispatcher->enable('/api/world', 'world');
 
-        print_r($this->dispatcher);
+        print_r($this->dispatcher->module_enabled);
     }
 
 
     /**
+     * pass done
      * @return void
      */
     function catchError()
@@ -207,9 +215,9 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
 
 
     // stub
-    private function index()
+    public function index()
     {
-        return 'hello world';
+        echo 'stub: hello world';
     }
 
 
@@ -218,6 +226,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
      * action => index,
      * params => [one, two, three]
      *
+     * pass done
      * 控制器之间互相回调
      * @return void
      */
@@ -227,21 +236,23 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         var_dump(\Raichu\Engine\Loader::loaded('DispatcherTest.php'));
 
         // crash reason: composer update
-        $crash = <<<CRASH
-Deprecation Notice: Class Raichu\Engine\AbstractModel located in ./System/Engine/AbstructModel.php does not comply with psr-4 autoloading standard. It will not autoload anymore in Composer v2.0. in phar:///usr/local/Cellar/composer/1.10.9/bin/composer/src/Composer/Autoload/ClassMapGenerator.php:201
-Deprecation Notice: Class Raichu\Engine\AbstractController located in ./System/Engine/AbstructController.php does not comply with psr-4 autoloading standard. It will not autoload anymore in Composer v2.0. in phar:///usr/local/Cellar/composer/1.10.9/bin/composer/src/Composer/Autoload/ClassMapGenerator.php:201
-Generated optimized autoload files containing 672 classes
-CRASH;
+        // $crash = <<<CRASH
+// Deprecation Notice: Class Raichu\Engine\AbstractModel located in ./System/Engine/AbstructModel.php does not comply with psr-4 autoloading standard. It will not autoload anymore in Composer v2.0. in phar:///usr/local/Cellar/composer/1.10.9/bin/composer/src/Composer/Autoload/ClassMapGenerator.php:201
+// Deprecation Notice: Class Raichu\Engine\AbstractController located in ./System/Engine/AbstructController.php does not comply with psr-4 autoloading standard. It will not autoload anymore in Composer v2.0. in phar:///usr/local/Cellar/composer/1.10.9/bin/composer/src/Composer/Autoload/ClassMapGenerator.php:201
+// Generated optimized autoload files containing 672 classes
+// CRASH;
 
-        echo $this->dispatcher->forward(null);
-        die();
+        $this->app->bind(\DispatcherTest::class);
+        $this->dispatcher->forward(['controller' => \DispatcherTest::class]);
 
-        $this->dispatcher->forward(['action' => 'logger']);
-        $this->dispatcher->forward([
-            'action' => 'shakehands',
-            'params' => [$this->app->getRequest()],
-        ]);
+        // $this->dispatcher->forward(['action' => 'logger']);
+        // $this->dispatcher->forward([
+        //    'action' => 'shakehands',
+        //    'params' => [$this->app->getRequest()],
+        // ]);
+        // die();
 
+        /*
         $this->dispatcher->forward([
             'controller' => \World\Controller\WorldController::class,
             'action' => 'world',
@@ -259,11 +270,13 @@ CRASH;
             'action' => 'shakehands',
             null
         ]);
+        */
     }
 
 
     /**
-     * @return \Raichu\Engine\AbstractController
+     * pass done
+     * @return null|\Raichu\Engine\AbstractController
      */
     function initPtr()
     {
@@ -303,5 +316,6 @@ $dispatcher->forwardEvent();
 // $dispatcher->catchError();
 
 // $app = $dispatcher->initPtr();
+// var_dump($app);
 // $dispatcher->cleanObject();
 ;

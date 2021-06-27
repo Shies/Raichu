@@ -1,5 +1,6 @@
 <?php
 namespace Raichu\Engine;
+use Raichu\Provider\Logger;
 /**
  * 分发器/调度器.
  * User: gukai@bilibili.com
@@ -111,9 +112,9 @@ class Dispatcher
 
         $buffer = NULL;
         if ($display === true) {
-            $this->view->render($name, $data, $display);
+            $this->view->render($name, $data, true);
         } else {
-            $buffer = $this->view->render($name, $data, $display);
+            $buffer = $this->view->render($name, $data, false);
         }
 
         // if we need run in console, then need set it for true;
@@ -169,7 +170,7 @@ class Dispatcher
      * });
      */
     // Event loop and Event driver
-    public function make($abstract, array $parameters = null)
+    public function make($abstract, array $parameters = [])
     {
         // Javascript Promise
         // $this->reject();
@@ -233,29 +234,42 @@ class Dispatcher
      * params => [one, two, three]
      * 控制器之间互相回调
      *
-     * @return bool|void
+     * @return mixed|void
      */
     public function forward(array $segment)
     {
-        try {
-            $this->parseSegment($segment);
-            $ref = new \ReflectionMethod($this->controller, $this->method);
-            $args = $ref->getParameters();
+        // common arguments
+        $arguments = [];
 
-            $params = [];
-            $params = array_merge($params, $this->args);
-            foreach ($args AS $object) {
-                if (isset($object->getClass()->name)) {
-                    if ($object->getClass()->name == Request::class) {
-                        array_unshift($params, $this->app->getRequest());
-                        break;
-                    }
-                }
+        $this->parseSegment($segment);
+        if ($this->args) {
+            $arguments = array_merge($arguments, $this->args);
+        }
+
+        $instance = $this->make($this->controller);
+        foreach ($arguments AS $key => $object) {
+            $class = '';
+            if (is_object($object)) {
+                $class = get_class($object);
             }
-            $ref->invokeArgs(new $this->controller, $params);
-        } catch(\Exception $e) {
+            if (class_exists($class) && $class == Request::class) {
+                unset($arguments[$key]);
+                array_unshift($arguments, $this->app->getRequest());
+                break;
+            }
+        }
+
+        if (empty($arguments)) {
+            $arguments[] = $this->app->getRequest();
+        }
+
+        $returnValue = call_user_func_array([$instance, $this->method], $arguments);
+        if ($returnValue === false) {
+            Logger::getInstance()->error('[Dispatcher]: call error');
             return false;
         }
+
+        return $returnValue;
     }
 
 
