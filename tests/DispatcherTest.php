@@ -55,7 +55,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         $request = $request->setUri('/hello/hello/index');
         $this->app->parseRouterUrl($request);
 
-        echo $this->app->getRouter()->fetchModules()."\n";
+        echo $this->app->getRouter()->fetchModule()."\n";
         echo $this->app->getRouter()->fetchController()."\n";
         echo $this->app->getRouter()->fetchMethod()."\n";
 

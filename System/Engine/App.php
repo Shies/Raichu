@@ -234,7 +234,6 @@ class App extends Container
     /**
      * 初始化装载器实例
      *
-     * @param null $modules
      * @return mixed
      */
     public function autoload()

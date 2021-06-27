@@ -26,7 +26,7 @@ class Router
      * 获取分发指定模块
      * @var string
      */
-    protected static $modules = 'Hello';
+    protected static $module = 'Hello';
 
     /**
      * 后去分发指定控制器
@@ -97,7 +97,7 @@ class Router
     {
         $this->prefix = $prefix;
         if ($module) {
-            static::$modules = ucfirst($module);
+            static::$module = ucfirst($module);
         }
     }
 
@@ -127,7 +127,7 @@ class Router
         reset($segments);
         if (current($segments)) {
             if (is_dir(APP_PATH .'/Modules/'.ucfirst($segments[0]))) {
-                static::$modules = ucfirst($segments[0]);
+                static::$module = ucfirst($segments[0]);
                 unset($segments[0]);
                 if (isset($segments[1])) {
                     static::$controller = $segments[1];
@@ -163,7 +163,7 @@ class Router
             return false;
         }
 
-        $modules = strtolower($this->fetchModules());
+        $module = strtolower($this->fetchModule());
         $controller = $this->fetchController();
         $method = $this->fetchMethod();
         $params = $this->fetchParams();
@@ -171,7 +171,7 @@ class Router
         // 判断是否启动了modules
         if (
             isset($this->app->config['modules']) &&
-            !array_key_exists($modules, $this->app->config['modules'])
+            !array_key_exists($module, $this->app->config['modules'])
         ) {
             return false;
         }
@@ -219,9 +219,9 @@ class Router
      * @param string $slash
      * @return mixed|null|string
      */
-    public function fetchModules()
+    public function fetchModule()
     {
-        return static::$modules;
+        return static::$module;
     }
 
 
@@ -232,7 +232,7 @@ class Router
     public function fetchController()
     {
         $controller = ucfirst(static::$controller) . 'Controller';
-        return static::$modules.'\\Controller\\'.$controller;
+        return static::$module.'\\Controller\\'.$controller;
     }
 
 
@@ -386,7 +386,7 @@ class Router
 
                 if (is_array($route['fn'])) {
                     list($controller, $method) = $route['fn'];
-                    $namespace = static::$modules.'\\Controller\\'.$controller;
+                    $namespace = static::$module.'\\Controller\\'.$controller;
                     $instance = new $namespace();
 
                     if (method_exists($instance, 'beforeExecuteRoute')) {
