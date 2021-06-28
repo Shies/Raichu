@@ -182,9 +182,7 @@ class Dispatcher
     /**
      * 301/302重定向
      *
-     * @param $uri
-     * @param string $method
-     * @param int $http_response_code
+     * @param string $uri
      * @return bool
      */
     public function redirect($uri)
@@ -211,7 +209,7 @@ class Dispatcher
      * 通过调度器设置中间件
      *
      * @param $name
-     * @return false|null|object
+     * @return false|object
      */
     public function getMiddleware($name)
     {
@@ -220,9 +218,14 @@ class Dispatcher
         }
 
         $instance = null;
+		
+		// https://www.php.net/manual/zh/function.method-exists.php
         if (method_exists($name, "getInstance")) {
             $instance = $name::getInstance($this->app);
-        }
+        } else {
+			// init __construct
+			$instance = new $name($this->app);
+		}
 
         return $instance;
     }
@@ -234,7 +237,7 @@ class Dispatcher
      * params => [one, two, three]
      * 控制器之间互相回调
      *
-     * @return mixed|void
+     * @return mixed|false
      */
     public function forward(array $segment)
     {

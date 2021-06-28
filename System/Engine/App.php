@@ -233,7 +233,6 @@ class App extends Container
 
     /**
      * 初始化装载器实例
-     *
      * @return mixed
      */
     public function autoload()
