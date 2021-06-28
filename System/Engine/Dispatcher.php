@@ -208,24 +208,24 @@ class Dispatcher
     /**
      * 通过调度器设置中间件
      *
-     * @param $name
+     * @param string $class
      * @return false|object
      */
-    public function getMiddleware($name)
+    public function getMiddleware($class)
     {
-        if (!is_string($name)) {
+        if (!is_string($class)) {
             return false;
         }
 
-        $instance = null;
+        $instance = NULL;
 		
-		// https://www.php.net/manual/zh/function.method-exists.php
-        if (method_exists($name, "getInstance")) {
-            $instance = $name::getInstance($this->app);
+	// https://www.php.net/manual/zh/function.method-exists.php
+        if (method_exists($class, "getInstance")) {
+            $instance = $class::getInstance($this->app);
         } else {
-			// init __construct
-			$instance = new $name($this->app);
-		}
+	    // init __construct
+	    $instance = new $class($this->app);
+	}
 
         return $instance;
     }
