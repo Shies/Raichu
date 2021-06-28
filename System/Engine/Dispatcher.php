@@ -1,6 +1,7 @@
 <?php
 namespace Raichu\Engine;
 use Raichu\Provider\Logger;
+
 /**
  * 分发器/调度器.
  * User: gukai@bilibili.com
@@ -218,14 +219,14 @@ class Dispatcher
         }
 
         $instance = NULL;
-		
-	// https://www.php.net/manual/zh/function.method-exists.php
+
+        // https://www.php.net/manual/zh/function.method-exists.php
         if (method_exists($class, "getInstance")) {
             $instance = $class::getInstance($this->app);
         } else {
-	    // init __construct
-	    $instance = new $class($this->app);
-	}
+            // init __construct
+            $instance = new $class($this->app);
+        }
 
         return $instance;
     }
