@@ -61,7 +61,7 @@ class WorldController extends AbstractController
 
     public function shakehands()
     {
-        echo $this->make("world_provider")->lets();
+        echo $this->make("world_provider")->letus();
         $this->quit();
     }
 

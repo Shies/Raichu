@@ -168,7 +168,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         // 强制即时刷新 @override
         $this->instantly_flush = !false;
 
-        echo TPL_PATH.'/heredoc';
+        echo TPL_PATH.'/heredoc.php';
         // $this->render(TPL_PATH .'/heredoc');
         // $this->render(TPL_PATH .'/heredoc', ['foo' => $foo, 'bar' => $bar], true);
 
@@ -252,7 +252,6 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
         // ]);
         // die();
 
-        /*
         $this->dispatcher->forward([
             'controller' => \World\Controller\WorldController::class,
             'action' => 'world',
@@ -270,7 +269,7 @@ class DispatcherTest extends \Raichu\Engine\Dispatcher
             'action' => 'shakehands',
             null
         ]);
-        */
+        die();
     }
 
 
